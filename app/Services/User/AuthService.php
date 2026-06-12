@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthService
 {
-    public function login(array $newUser, bool $remember = false): bool
+    public function login(array $credentials, bool $remember = false): bool
     {
-        return Auth::attempt($newUser, $remember);
+        return Auth::attempt($credentials, $remember);
     }
 
     public function register(array $data): User
@@ -25,7 +25,6 @@ class AuthService
     public function updateProfile(User $user, array $data): User
     {
         $user->update($data);
-
         return $user->fresh();
     }
 }
