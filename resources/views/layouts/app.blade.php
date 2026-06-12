@@ -37,6 +37,9 @@
             @if (auth('admin')->check())
                 <a href="{{ route('admin.dashboard') }}">Dashboard</a>
                 <a href="{{ route('admin.categories.index') }}">Admin Categories</a>
+                @if (auth('admin')->user()?->hasRole('super-admin'))
+                    <a href="{{ route('admin.permissions.index') }}">Permissions</a>
+                @endif
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
                     <button class="button secondary" type="submit">Logout</button>

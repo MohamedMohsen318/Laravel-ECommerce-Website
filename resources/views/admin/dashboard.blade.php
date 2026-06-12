@@ -1,11 +1,135 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard')
+@section('title', 'Sales Dashboard')
 
 @section('content')
-    <section class="card">
-        <h1>Admin Dashboard</h1>
-        <p class="muted">Manage store content from here.</p>
-        <p><a class="button" href="{{ route('admin.categories.index') }}">Manage categories</a></p>
+    <style>
+        .dashboard-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .metric {
+            min-height: 128px;
+            display: grid;
+            align-content: space-between;
+            gap: 14px;
+        }
+
+        .metric strong {
+            display: block;
+            font-size: 30px;
+            color: #111827;
+        }
+
+        .metric span {
+            color: #6b7280;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+            gap: 16px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            border-radius: 999px;
+            padding: 4px 10px;
+            background: #ecfdf5;
+            color: #047857;
+            font-size: 13px;
+        }
+
+        @media (max-width: 860px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <section class="stack">
+        <div class="dashboard-head">
+            <div>
+                <h1>Sales Dashboard</h1>
+                <p class="muted">Track store activity, catalog health, and sales readiness.</p>
+            </div>
+            <div class="actions">
+                <a class="button secondary" href="{{ route('admin.categories.index') }}">Categories</a>
+                @if (auth('admin')->user()?->hasRole('super-admin'))
+                    <a class="button" href="{{ route('admin.permissions.index') }}">Admin permissions</a>
+                @endif
+            </div>
+        </div>
+
+        <div class="grid">
+            <article class="card metric">
+                <span>Total revenue</span>
+                <strong>${{ number_format($stats['revenue'], 2) }}</strong>
+                <small class="muted">From orders table when available</small>
+            </article>
+            <article class="card metric">
+                <span>Orders</span>
+                <strong>{{ number_format($stats['orders']) }}</strong>
+                <small class="muted">Sales created in the system</small>
+            </article>
+            <article class="card metric">
+                <span>Customers</span>
+                <strong>{{ number_format($stats['customers']) }}</strong>
+                <small class="muted">Registered users</small>
+            </article>
+            <article class="card metric">
+                <span>Catalog items</span>
+                <strong>{{ number_format($stats['items']) }}</strong>
+                <small class="muted">{{ number_format($stats['categories']) }} categories</small>
+            </article>
+        </div>
+
+        <div class="dashboard-layout">
+            <section class="card">
+                <h2>Recent orders</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($recentOrders as $order)
+                            <tr>
+                                <td>#{{ $order->id }}</td>
+                                <td>${{ number_format($order->total ?? $order->total_price ?? 0, 2) }}</td>
+                                <td><span class="status-pill">{{ $order->status ?? 'new' }}</span></td>
+                                <td>{{ $order->created_at ?? '-' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="muted">No orders table data yet.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </section>
+
+            <aside class="card">
+                <h2>Top categories</h2>
+                <div class="stack">
+                    @forelse ($topCategories as $category)
+                        <div>
+                            <strong>{{ $category->translate('en')?->name ?? $category->slug }}</strong>
+                            <p class="muted">{{ $category->items_count }} items</p>
+                        </div>
+                    @empty
+                        <p class="muted">No categories yet.</p>
+                    @endforelse
+                </div>
+            </aside>
+        </div>
     </section>
 @endsection
