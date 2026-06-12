@@ -1,56 +1,45 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
-use Illuminate\Http\RedirectResponse;
+use App\Services\Admin\PermissionService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use Illuminate\Http\RedirectResponse;
 
 class PermissionController extends Controller
 {
-    private array $defaultPermissions = [
-        'view sales dashboard',
-        'manage categories',
-        'manage admins',
-        'manage permissions',
-    ];
+    public function __construct(
+        protected PermissionService $permissionService
+    ) {}
 
     public function index(): View
     {
-        $this->authorizeSuperAdmin();
-        $this->ensureDefaultRolesAndPermissions();
+        $this->permissionService->authorizeSuperAdmin();
+        $this->permissionService->ensureDefaults();
 
         return view('admin.permissions.index', [
-            'admins' => Admin::with('roles', 'permissions')
-                ->orderBy('name')
-                ->get(),
+            'admins' => $this->permissionService->getAdmins(),
         ]);
     }
 
     public function edit(Admin $admin): View
     {
-        $this->authorizeSuperAdmin();
-        $this->ensureDefaultRolesAndPermissions();
+        $this->permissionService->authorizeSuperAdmin();
+        $this->permissionService->ensureDefaults();
 
         return view('admin.permissions.edit', [
-            'admin' => $admin->load('roles', 'permissions'),
-            'roles' => Role::where('guard_name', 'admin')
-                ->orderBy('name')
-                ->get(),
-            'permissions' => Permission::where('guard_name', 'admin')
-                ->orderBy('name')
-                ->get(),
+            'admin' => $this->permissionService->getAdmin($admin),
+            'roles' => $this->permissionService->getRoles(),
+            'permissions' => $this->permissionService->getPermissions(),
         ]);
     }
 
     public function update(Request $request, Admin $admin): RedirectResponse
     {
-        $this->authorizeSuperAdmin();
-        $this->ensureDefaultRolesAndPermissions();
+        $this->permissionService->authorizeSuperAdmin();
+        $this->permissionService->ensureDefaults();
 
         $data = $request->validate([
             'roles' => 'array',
@@ -59,37 +48,10 @@ class PermissionController extends Controller
             'permissions.*' => 'exists:permissions,name',
         ]);
 
-        $admin->syncRoles($data['roles'] ?? []);
-        $admin->syncPermissions($data['permissions'] ?? []);
+        $this->permissionService->sync($admin, $data);
 
         return redirect()
             ->route('admin.permissions.index')
             ->with('success', 'Admin permissions updated successfully.');
-    }
-
-    private function authorizeSuperAdmin(): void
-    {
-        $admin = auth('admin')->user();
-        $hasSuperAdmin = Admin::role('super-admin', 'admin')->exists();
-
-        abort_unless(
-            $admin && ($admin->hasRole('super-admin') || ! $hasSuperAdmin),
-            403
-        );
-    }
-
-    private function ensureDefaultRolesAndPermissions(): void
-    {
-        $permissions = collect($this->defaultPermissions)
-            ->map(fn (string $permission) => Permission::findOrCreate($permission, 'admin'));
-
-        $superAdmin = Role::findOrCreate('super-admin', 'admin');
-        $admin = Role::findOrCreate('admin', 'admin');
-
-        $superAdmin->syncPermissions($permissions);
-        $admin->syncPermissions([
-            'view sales dashboard',
-            'manage categories',
-        ]);
     }
 }
