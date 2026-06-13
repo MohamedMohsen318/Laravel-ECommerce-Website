@@ -10,14 +10,15 @@ return new class extends Migration
     {
         Schema::create('model_translations', function (Blueprint $table) {
             $table->id();
-
             $table->morphs('model'); // model_id + model_type
-
-            $table->string('locale');
+            $table->string('locale', 10);
             $table->string('name');
-            $table->string('description')->nullable();
-
+            // FIX #8: text بدل string عشان الـ description ممكن تكون أطول من 255 حرف
+            $table->text('description')->nullable();
             $table->timestamps();
+
+            // منع تكرار نفس الـ locale للـ model
+            $table->unique(['model_id', 'model_type', 'locale']);
         });
     }
 

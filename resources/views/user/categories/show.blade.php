@@ -13,7 +13,14 @@
             @forelse ($category->children as $child)
                 <article class="card">
                     <h2>{{ $child->translate('en')?->name ?? $child->slug }}</h2>
-                    <a href="{{ route('categories.show', $category->slug . '/' . $child->slug) }}">View category</a>
+                    {{--
+                        FIX #11: بنبني الـ full path بشكل صح
+                        لو category عندها parent، الـ path لازم يشمله
+                        مثال: electronics/phones/samsung
+                    --}}
+                    <a href="{{ route('categories.show', $category->fullPath() . '/' . $child->slug) }}">
+                        View category
+                    </a>
                 </article>
             @empty
                 <p class="muted">No subcategories.</p>

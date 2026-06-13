@@ -5,7 +5,7 @@
 @section('content')
     <section class="card">
         <h1>Admin Login</h1>
-        <form class="form" method="POST" action="{{ route('admin.login') }}">
+        <form class="form" method="POST" action="{{ route('admins.login') }}">
             @csrf
             <label class="field">
                 <span>Email</span>

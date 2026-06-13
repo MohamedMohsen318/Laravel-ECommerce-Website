@@ -21,27 +21,24 @@ class CategoryController extends Controller
     {
         $categories = $this->categoryService->getCategoriesForIndex();
 
-        return view(
-            'admin.categories.index',
-            compact('categories')
-        );
+        return view('admin.categories.index', compact('categories'));
     }
 
     public function create(): Factory|View
     {
         $selectCategories = $this->categoryService->getCategoriesForSelect();
 
-        return view(
-            'admin.categories.create',
-            compact('selectCategories')
-        );
+        return view('admin.categories.create', compact('selectCategories'));
     }
 
+    // FIX #3: الـ Controller دلوقتي هو اللي بيعمل الـ redirect مش الـ Service
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
-        return $this->categoryService->store(
-            $request->validated()
-        );
+        $this->categoryService->store($request->validated());
+
+        return redirect()
+            ->route('admins.categories.index')
+            ->with('success', 'Category created successfully.');
     }
 
     public function show(Category $category)
@@ -51,38 +48,29 @@ class CategoryController extends Controller
 
     public function edit(Category $category): Factory|View
     {
-        $selectCategories = $this->categoryService
-            ->getCategoriesForEdit($category);
+        $selectCategories = $this->categoryService->getCategoriesForEdit($category);
 
-        $category->load([
-            'translations',
-            'media'
-        ]);
+        $category->load(['translations', 'media']);
 
-        return view(
-            'admin.categories.edit',
-            compact(
-                'category',
-                'selectCategories'
-            )
-        );
+        return view('admin.categories.edit', compact('category', 'selectCategories'));
     }
 
-    public function update(
-        UpdateCategoryRequest $request,
-        Category $category
-    ): RedirectResponse {
-        return $this->categoryService->update(
-            $request->validated(),
-            $category
-        );
+    // FIX #3: نفس الكلام - الـ redirect هنا مش في الـ Service
+    public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
+    {
+        $this->categoryService->update($request->validated(), $category);
+
+        return redirect()
+            ->route('admins.categories.index')
+            ->with('success', 'Category updated successfully.');
     }
 
-    public function destroy(
-        Category $category
-    ): RedirectResponse {
-        return $this->categoryService->destroy(
-            $category
-        );
+    public function destroy(Category $category): RedirectResponse
+    {
+        $this->categoryService->destroy($category);
+
+        return redirect()
+            ->route('admins.categories.index')
+            ->with('success', 'Category deleted successfully.');
     }
 }

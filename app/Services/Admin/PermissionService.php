@@ -1,77 +1,55 @@
 <?php
+
 namespace App\Services\Admin;
 
 use App\Models\Admin;
+use Database\Seeders\RolesAndPermissionsSeeder;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Collection;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
+// FIX #5: إنشاء الـ PermissionService اللي كان مش موجود
 class PermissionService
 {
-    private array $defaultPermissions = [
-        'view sales dashboard',
-        'manage categories',
-        'manage admins',
-        'manage permissions',
-    ];
+    // FIX #14: الـ roles والـ permissions بتتعمل بالـ guard الصح
+    private string $guard = 'admins';
+
+    public function authorizeSuperAdmin(): void
+    {
+        if (! auth('admins')->user()?->hasRole('super-admin')) {
+            throw new AuthorizationException('Access denied.');
+        }
+    }
 
     public function ensureDefaults(): void
     {
-        $permissions = collect($this->defaultPermissions)
-            ->map(fn ($permission) =>
-            Permission::findOrCreate($permission, 'admin')
-            );
-
-        $superAdmin = Role::findOrCreate('super-admin', 'admin');
-        $admin = Role::findOrCreate('admin', 'admin');
-
-        $superAdmin->syncPermissions($permissions);
-
-        $admin->syncPermissions([
-            'view sales dashboard',
-            'manage categories',
-        ]);
+        app(RolesAndPermissionsSeeder::class)->run();
     }
 
-    public function getAdmins()
+    public function getAdmins(): Collection
     {
-        return Admin::with('roles', 'permissions')
-            ->orderBy('name')
-            ->get();
+        return Admin::with(['roles', 'permissions'])->get();
     }
 
-    public function getAdmin(Admin $admin)
+    public function getAdmin(Admin $admin): Admin
     {
-        return $admin->load('roles', 'permissions');
+        return $admin->load(['roles', 'permissions']);
     }
 
-    public function getRoles()
+    public function getRoles(): Collection
     {
-        return Role::where('guard_name', 'admin')
-            ->orderBy('name')
-            ->get();
+        return Role::where('guard_name', $this->guard)->get();
     }
-    public function getPermissions()
+
+    public function getPermissions(): Collection
     {
-        return Permission::where('guard_name', 'admin')
-            ->orderBy('name')
-            ->get();
+        return Permission::where('guard_name', $this->guard)->get();
     }
 
     public function sync(Admin $admin, array $data): void
     {
         $admin->syncRoles($data['roles'] ?? []);
         $admin->syncPermissions($data['permissions'] ?? []);
-    }
-
-    public function authorizeSuperAdmin(): void
-    {
-        $admin = auth('admin')->user();
-
-        $hasSuperAdmin = Admin::role('super-admin', 'admin')->exists();
-
-        abort_unless(
-            $admin && ($admin->hasRole('super-admin') || ! $hasSuperAdmin),
-            403
-        );
     }
 }

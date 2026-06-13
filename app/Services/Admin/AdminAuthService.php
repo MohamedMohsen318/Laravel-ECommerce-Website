@@ -9,7 +9,7 @@ class AdminAuthService
 {
     public function login(array $credentials, bool $remember = false): bool
     {
-        return Auth::guard('admin')->attempt([
+        return Auth::guard('admins')->attempt([
             'email' => $credentials['email'],
             'password' => $credentials['password'],
         ], $remember);
@@ -26,6 +26,6 @@ class AdminAuthService
 
     public function logout(): void
     {
-        Auth::guard('admin')->logout();
+        Auth::guard('admins')->logout();
     }
 }

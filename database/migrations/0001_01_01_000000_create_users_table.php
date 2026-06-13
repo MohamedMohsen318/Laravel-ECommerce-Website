@@ -17,18 +17,15 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->enum("role", ["admin", "user"])->default("user");
             $table->timestamps();
         });
 
-        // password reset
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
-        // sessions
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();

@@ -3,7 +3,6 @@
 namespace App\Services\Admin;
 
 use App\Models\Category;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 
 class CategoryService
@@ -13,7 +12,7 @@ class CategoryService
         return Category::with([
             'allChildren',
             'translations',
-            'media'
+            'media',
         ])
             ->withCount('items')
             ->whereNull('parent_id')
@@ -33,11 +32,12 @@ class CategoryService
             ->get();
     }
 
-    public function store(array $data): RedirectResponse
+    // FIX #3: الـ Service دلوقتي بترجع Category مش RedirectResponse
+    public function store(array $data): Category
     {
         $category = Category::create([
             'parent_id' => $data['parent_id'] ?? null,
-            'slug' => $this->makeUniqueSlug($data['translations']['en']['name']),
+            'slug'      => $this->makeUniqueSlug($data['translations']['en']['name']),
             'is_active' => (bool) ($data['is_active'] ?? false),
         ]);
 
@@ -47,18 +47,15 @@ class CategoryService
             $category->setMedia($data['image'], 'image', 'categories');
         }
 
-        return redirect()
-            ->route('admin.categories.index')
-            ->with('success', 'Category created successfully.');
+        return $category;
     }
 
-    public function update(
-        array $data,
-        Category $category
-    ): RedirectResponse {
+    // FIX #3: بترجع Category مش RedirectResponse
+    public function update(array $data, Category $category): Category
+    {
         $category->update([
             'parent_id' => $data['parent_id'] ?? null,
-            'slug' => $this->makeUniqueSlug(
+            'slug'      => $this->makeUniqueSlug(
                 $data['translations']['en']['name'],
                 $category->id
             ),
@@ -71,21 +68,17 @@ class CategoryService
             $category->setMedia($data['image'], 'image', 'categories');
         }
 
-        return redirect()
-            ->route('admin.categories.index')
-            ->with('success', 'Category updated successfully.');
+        return $category->fresh();
     }
 
-    public function destroy(
-        Category $category
-    ): RedirectResponse {
+    // FIX #3: بترجع void مش RedirectResponse
+    public function destroy(Category $category): void
+    {
         $category->delete();
-
-        return redirect()
-            ->route('admin.categories.index')
-            ->with('success', 'Category deleted successfully.');
     }
 
+    // FIX #4: كانت بتبعت $translations كله بدل ما تبعت $data['translations']
+    // والصح إنها تبعت $translations اللي هو parameter الـ method
     private function syncTranslations(Category $category, array $translations): void
     {
         foreach ($translations as $locale => $content) {
@@ -98,12 +91,12 @@ class CategoryService
     private function makeUniqueSlug(string $name, ?int $ignoreId = null): string
     {
         $baseSlug = Str::slug($name);
-        $slug = $baseSlug;
-        $counter = 1;
+        $slug     = $baseSlug;
+        $counter  = 1;
 
         while (
             Category::where('slug', $slug)
-                ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+                ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
                 ->exists()
         ) {
             $slug = "{$baseSlug}-{$counter}";

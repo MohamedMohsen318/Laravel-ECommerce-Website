@@ -7,7 +7,7 @@
         <h1>Edit Permissions</h1>
         <p class="muted">{{ $admin->name }} - {{ $admin->email }}</p>
 
-        <form class="form" method="POST" action="{{ route('admin.permissions.update', $admin) }}">
+        <form class="form" method="POST" action="{{ route('admins.permissions.update', $admin) }}">
             @csrf
             @method('PUT')
 
@@ -33,7 +33,7 @@
 
             <div class="actions">
                 <button class="button" type="submit">Save permissions</button>
-                <a class="button secondary" href="{{ route('admin.permissions.index') }}">Cancel</a>
+                <a class="button secondary" href="{{ route('admins.permissions.index') }}">Cancel</a>
             </div>
         </form>
     </section>

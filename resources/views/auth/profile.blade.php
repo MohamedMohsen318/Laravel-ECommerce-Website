@@ -24,10 +24,10 @@
                 <span>Address</span>
                 <textarea name="address" rows="3">{{ old('address', $user->address) }}</textarea>
             </label>
-            <label class="field">
-                <span>New password</span>
-                <input class="input" type="password" name="password">
-            </label>
+                <label class="field">
+                    <span>New password</span>
+                    <input class="input" type="password" name="password">
+                </label>
             <label class="field">
                 <span>Confirm new password</span>
                 <input class="input" type="password" name="password_confirmation">

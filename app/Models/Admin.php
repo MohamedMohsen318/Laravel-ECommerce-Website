@@ -10,7 +10,7 @@ class Admin extends Authenticatable
 {
     use HasRoles, Notifiable;
 
-    protected $guard_name = 'admin';
+    protected $guard_name = 'admins';
 
     protected $fillable = [
         'name',
@@ -23,10 +23,4 @@ class Admin extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'password' => 'hashed',
-        ];
-    }
 }

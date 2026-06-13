@@ -6,7 +6,7 @@ use App\Models\Category;
 
 class CategoryService
 {
-    public function getAll()
+    public function getRootCategories()
     {
         return Category::whereNull('parent_id')
             ->where('is_active', true)

@@ -58,9 +58,11 @@
                 <p class="muted">Track store activity, catalog health, and sales readiness.</p>
             </div>
             <div class="actions">
-                <a class="button secondary" href="{{ route('admin.categories.index') }}">Categories</a>
-                @if (auth('admin')->user()?->hasRole('super-admin'))
-                    <a class="button" href="{{ route('admin.permissions.index') }}">Admin permissions</a>
+                <a class="button secondary" href="{{ route('admins.categories.index') }}">Categories</a>
+                @if (auth('admins')->user()?->hasRole('super-admin'))
+                    <a class="button" href="{{ route('admins.admins.create') }}">Create Admin</a>
+                    <a class="button secondary" href="{{ route('admins.admins.index') }}">Manage Admins</a>
+                    <a class="button" href="{{ route('admins.permissions.index') }}">Admin permissions</a>
                 @endif
             </div>
         </div>

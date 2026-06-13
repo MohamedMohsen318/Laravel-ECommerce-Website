@@ -51,7 +51,7 @@ class PermissionController extends Controller
         $this->permissionService->sync($admin, $data);
 
         return redirect()
-            ->route('admin.permissions.index')
+            ->route('admins.permissions.index')
             ->with('success', 'Admin permissions updated successfully.');
     }
 }

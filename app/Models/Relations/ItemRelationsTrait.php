@@ -3,11 +3,16 @@
 namespace App\Models\Relations;
 
 use App\Models\Category;
-use App\Models\Item;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-trait ItemRelationsTrait{
-
+// FIX #13: الـ trait مكانش فاضي - أضفنا علاقة الـ categories
+trait ItemRelationsTrait
+{
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            related: Category::class,
+            table: 'category_item'
+        );
+    }
 }

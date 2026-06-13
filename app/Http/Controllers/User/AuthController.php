@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Requests\Auth\UpdateProfileRequest;
+use App\Http\Requests\User\UserLoginRequest;
+use App\Http\Requests\User\UserRegisterRequest;
+use App\Http\Requests\User\UpdateProfileRequest;
 use App\Services\User\AuthService;
 
 class AuthController extends Controller
@@ -14,12 +14,12 @@ class AuthController extends Controller
         protected AuthService $authService
     ) {}
 
-    public function showRegister()
+    public function showRegistrationForm()
     {
         return view('auth.register');
     }
 
-    public function register(RegisterRequest $request)
+    public function register(UserRegisterRequest $request)
     {
         auth()->login(
             $this->authService->register($request->validated())
@@ -28,17 +28,25 @@ class AuthController extends Controller
         return redirect()->route('home');
     }
 
-    public function showLogin()
+    public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    public function login(LoginRequest $request)
+    public function login(UserLoginRequest $request)
     {
-        $this->authService->login(
-            $request->validated(),
+        $success = $this->authService->login(
+            $request->only('email', 'password'),
             $request->boolean('remember')
         );
+
+        if (! $success) {
+            return back()->withErrors([
+                'email' => 'Invalid credentials.',
+            ])->onlyInput('email');
+        }
+
+        $request->session()->regenerate();
 
         return redirect()->route('home');
     }
@@ -53,7 +61,7 @@ class AuthController extends Controller
     public function showProfile()
     {
         return view('auth.profile', [
-            'user' => auth()->user()
+            'user' => auth()->user(),
         ]);
     }
 
@@ -64,7 +72,6 @@ class AuthController extends Controller
             $request->validated()
         );
 
-        return back()
-            ->with('success', 'Profile updated successfully.');
+        return back()->with('success', 'Profile updated successfully.');
     }
 }

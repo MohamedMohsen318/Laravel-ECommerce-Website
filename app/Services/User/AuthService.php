@@ -24,6 +24,10 @@ class AuthService
 
     public function updateProfile(User $user, array $data): User
     {
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+
         $user->update($data);
         return $user->fresh();
     }

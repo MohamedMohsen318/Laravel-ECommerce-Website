@@ -6,7 +6,7 @@
     <section class="stack">
         <div class="actions">
             <h1 style="margin-right: auto;">Categories</h1>
-            <a class="button" href="{{ route('admin.categories.create') }}">Create category</a>
+            <a class="button" href="{{ route('admins.categories.create') }}">Create category</a>
         </div>
 
         <div class="card">
@@ -29,8 +29,10 @@
                             <td>{{ $category->is_active ? 'Active' : 'Inactive' }}</td>
                             <td>
                                 <div class="actions">
-                                    <a class="button secondary" href="{{ route('admin.categories.edit', $category) }}">Edit</a>
-                                    <form method="POST" action="{{ route('admin.categories.destroy', $category) }}">
+                                    <a class="button secondary" href="{{ route('admins.categories.edit', $category) }}">Edit</a>
+                                    {{-- FIX #10: إضافة confirmation قبل الحذف --}}
+                                    <form method="POST" action="{{ route('admins.categories.destroy', $category) }}"
+                                          onsubmit="return confirm('Are you sure you want to delete this category?')">
                                         @csrf
                                         @method('DELETE')
                                         <button class="button danger" type="submit">Delete</button>

@@ -18,6 +18,7 @@
         .button { border: 0; border-radius: 6px; padding: 10px 14px; background: #111827; color: #fff; cursor: pointer; font: inherit; display: inline-flex; align-items: center; justify-content: center; }
         .button.secondary { background: #e5e7eb; color: #111827; }
         .button.danger { background: #dc2626; }
+        .nav-link-featured { border-radius: 6px; padding: 8px 10px; background: #111827; color: #fff; }
         .alert { padding: 12px 14px; border-radius: 6px; margin-bottom: 16px; }
         .alert.success { background: #dcfce7; color: #166534; }
         .alert.error { background: #fee2e2; color: #991b1b; }
@@ -34,13 +35,15 @@
         <a href="{{ route('home') }}">{{ config('app.name', 'Laravel Store') }}</a>
         <div class="nav-links">
             <a href="{{ route('categories.index') }}">Categories</a>
-            @if (auth('admin')->check())
-                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-                <a href="{{ route('admin.categories.index') }}">Admin Categories</a>
-                @if (auth('admin')->user()?->hasRole('super-admin'))
-                    <a href="{{ route('admin.permissions.index') }}">Permissions</a>
+            @if (auth('admins')->check())
+                <a href="{{ route('admins.dashboard') }}">Dashboard</a>
+                <a href="{{ route('admins.categories.index') }}">Admin Categories</a>
+                @if (auth('admins')->user()?->hasRole('super-admin'))
+                    <a class="nav-link-featured" href="{{ route('admins.admins.create') }}">Create Admin</a>
+                    <a href="{{ route('admins.admins.index') }}">Admins</a>
+                    <a href="{{ route('admins.permissions.index') }}">Permissions</a>
                 @endif
-                <form method="POST" action="{{ route('admin.logout') }}">
+                <form method="POST" action="{{ route('admins.logout') }}">
                     @csrf
                     <button class="button secondary" type="submit">Logout</button>
                 </form>

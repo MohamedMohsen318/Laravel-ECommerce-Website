@@ -30,4 +30,19 @@ class Category extends Model
 
         return $totalItems;
     }
+
+    // FIX #11: method لبناء الـ full path من الـ root
+    // مثال: electronics/phones/samsung
+    public function fullPath(): string
+    {
+        $slugs = [$this->slug];
+        $parent = $this->parent;
+
+        while ($parent) {
+            array_unshift($slugs, $parent->slug);
+            $parent = $parent->parent;
+        }
+
+        return implode('/', $slugs);
+    }
 }

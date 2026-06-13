@@ -6,21 +6,22 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCategoryRequest extends FormRequest
 {
+    // FIX #7: بدل ما تكون true دايماً، بنتحقق إن المستخدم admins
     public function authorize(): bool
     {
-        return true;
+        return auth('admins')->check();
     }
 
     public function rules(): array
     {
         return [
-            'parent_id' => 'nullable|exists:categories,id',
-            'image' => 'nullable|image',
-            'is_active' => 'nullable|boolean',
-            'translations.en.name' => 'required|string|max:100',
-            'translations.en.description' => 'nullable|string',
-            'translations.ar.name' => 'nullable|string|max:100',
-            'translations.ar.description' => 'nullable|string',
+            'parent_id'                    => 'nullable|exists:categories,id',
+            'image'                        => 'nullable|image|max:2048',
+            'is_active'                    => 'nullable|boolean',
+            'translations.en.name'         => 'required|string|max:100',
+            'translations.en.description'  => 'nullable|string',
+            'translations.ar.name'         => 'nullable|string|max:100',
+            'translations.ar.description'  => 'nullable|string',
         ];
     }
 }

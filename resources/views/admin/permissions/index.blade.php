@@ -30,7 +30,7 @@
                             <td>{{ $admin->roles->pluck('name')->join(', ') ?: 'No roles' }}</td>
                             <td>{{ $admin->permissions->pluck('name')->join(', ') ?: 'No direct permissions' }}</td>
                             <td>
-                                <a class="button secondary" href="{{ route('admin.permissions.edit', $admin) }}">Edit</a>
+                                <a class="button secondary" href="{{ route('admins.permissions.edit', $admin) }}">Edit</a>
                             </td>
                         </tr>
                     @empty
