@@ -5,7 +5,7 @@ namespace App\Models\Relations;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-// FIX #13: الـ trait مكانش فاضي - أضفنا علاقة الـ categories
+ categories
 trait ItemRelationsTrait
 {
     public function categories(): BelongsToMany{
