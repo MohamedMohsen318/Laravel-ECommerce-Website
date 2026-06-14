@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCategoryRequest extends FormRequest
 {
-    // FIX #7: بدل ما تكون true دايماً، بنتحقق إن المستخدم admins
     public function authorize(): bool
     {
         return auth('admins')->check();

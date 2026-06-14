@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCategoryRequest extends FormRequest
 {
-    // FIX #7: نفس الكلام - بنتحقق إن المستخدم admins
     public function authorize(): bool
     {
         return auth('admins')->check();
