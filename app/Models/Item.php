@@ -33,4 +33,14 @@ class Item extends Model
         'discount_price' => 'decimal:2',
         'status' => ItemStatus::class,
     ];
+
+    public function getNameAttribute(): string
+    {
+        return $this->translate('en')?->name ?? 'Untitled product';
+    }
+
+    public function getDescriptionAttribute(): ?string
+    {
+        return $this->translate('en')?->description;
+    }
 }

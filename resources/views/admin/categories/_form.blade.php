@@ -18,24 +18,17 @@
 </label>
 
 <label class="field">
-    <span>English name</span>
+    <span>Name</span>
     <input class="input" type="text" name="translations[en][name]" value="{{ old('translations.en.name', $category?->translate('en')?->name ?? '') }}" required>
 </label>
 
 <label class="field">
-    <span>English description</span>
+    <span>Description</span>
     <textarea name="translations[en][description]" rows="3">{{ old('translations.en.description', $category?->translate('en')?->description ?? '') }}</textarea>
 </label>
 
-<label class="field">
-    <span>Arabic name</span>
-    <input class="input" type="text" name="translations[ar][name]" value="{{ old('translations.ar.name', $category?->translate('ar')?->name ?? '') }}">
-</label>
-
-<label class="field">
-    <span>Arabic description</span>
-    <textarea name="translations[ar][description]" rows="3">{{ old('translations.ar.description', $category?->translate('ar')?->description ?? '') }}</textarea>
-</label>
+<input type="hidden" name="translations[ar][name]" value="">
+<input type="hidden" name="translations[ar][description]" value="">
 
 <label class="field">
     <span>Image</span>
