@@ -17,11 +17,15 @@ class CategoryController extends Controller
         private CategoryService $categoryService
     ) {}
 
-    public function index(): Factory|View{
+    public function index(): Factory|View
+    {
         $categories = $this->categoryService->getCategoriesForIndex();
+
         return view('admin.categories.index', compact('categories'));
     }
-    public function create(): Factory|View{
+
+    public function create(): Factory|View
+    {
         $selectCategories = $this->categoryService->getCategoriesForSelect();
 
         return view('admin.categories.create', compact('selectCategories'));
@@ -36,24 +40,28 @@ class CategoryController extends Controller
             ->with('success', 'Category created successfully.');
     }
 
-    public function show(Category $category)
+    public function edit(Category $category): Factory|View
     {
-        //
-    }
-
-    public function edit(Category $category): Factory|View{
         $selectCategories = $this->categoryService->getCategoriesForEdit($category);
+
         $category->load(['translations', 'media']);
+
         return view('admin.categories.edit', compact('category', 'selectCategories'));
     }
-    public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse{
+
+    public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
+    {
         $this->categoryService->update($request->validated(), $category);
+
         return redirect()
             ->route('admins.categories.index')
             ->with('success', 'Category updated successfully.');
     }
-    public function destroy(Category $category): RedirectResponse{
+
+    public function destroy(Category $category): RedirectResponse
+    {
         $this->categoryService->destroy($category);
+
         return redirect()
             ->route('admins.categories.index')
             ->with('success', 'Category deleted successfully.');

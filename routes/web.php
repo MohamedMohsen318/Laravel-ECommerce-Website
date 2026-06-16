@@ -1,23 +1,34 @@
 <?php
 
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PermissionController as AdminPermissionController;
 use App\Http\Controllers\Admin\AdminController as AdminAdminController;
 use App\Http\Controllers\Admin\ItemController as AdminItemController;
-use App\Http\Controllers\User\OrderController as UserOrderController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\CartController as AdminCartController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ItemController as UserItemController;
+use App\Http\Controllers\User\OrderController as UserOrderController;
+use App\Http\Controllers\User\CartController as UserCartController;
 use Illuminate\Support\Facades\Route;
 
 // Home
+
 Route::get('/', fn () => view('welcome'))
     ->name('home');
 
+// Language Switch
 
-// AUTH (USER)
+
+Route::get('/lang/{lang}', [LanguageController::class, 'switch'])
+    ->name('lang.switch');
+
+// USER AUTH
+
 Route::middleware('guest')->group(function () {
 
     Route::get('/register', [AuthController::class, 'showRegistrationForm'])
@@ -43,51 +54,98 @@ Route::middleware('auth')->group(function () {
         ->name('profile.update');
 });
 
+// USER CATEGORIES & PRODUCTS
 
 
-// Categories (user)
 Route::get('/categories', [CategoryController::class, 'index'])
     ->name('categories.index');
 
 Route::get('/categories/{path}', [CategoryController::class, 'show'])
-    ->where('path', '.*')
-    ->name('categories.show');
+    ->where('path', '.*')->name('categories.show');
 
-
-// Products (user)
 Route::get('/products', [UserItemController::class, 'index'])
     ->name('products.index');
 
 Route::get('/products/{item}', [UserItemController::class, 'show'])
     ->name('products.show');
 
+// USER CART
+
+
 Route::middleware('auth')->group(function () {
-    Route::post('/orders', [UserOrderController::class, 'store'])
-        ->name('orders.store');
+
+    Route::prefix('cart')
+        ->name('cart.')
+        ->group(function () {
+
+            Route::get('/', [UserCartController::class, 'index'])
+                ->name('index');
+
+            Route::post('/add', [UserCartController::class, 'add'])
+                ->name('add');
+
+            Route::put('/{itemId}', [UserCartController::class, 'update'])
+                ->name('update');
+
+            Route::delete('/{itemId}', [UserCartController::class, 'remove'])
+                ->name('remove');
+
+            Route::delete('/clear', [UserCartController::class, 'clear'])
+                ->name('clear');
+
+            Route::post('/coupon', [UserCartController::class, 'applyCoupon'])
+                ->name('coupon.apply');
+
+            Route::delete('/coupon', [UserCartController::class, 'removeCoupon'])
+                ->name('coupon.remove');
+        });
 });
 
+// USER ORDERS
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::post('/orders', [UserOrderController::class, 'store'])
+        ->name('orders.store');
+
+    Route::get('/orders', [UserOrderController::class, 'index'])
+        ->name('orders.index');
+
+    Route::get('/orders/{order}', [UserOrderController::class, 'show'])
+        ->name('orders.show');
+});
 
 // ADMIN PANEL
+
 
 Route::prefix('admin')
     ->name('admins.')
     ->group(function () {
 
         // Guest Admin
+
         Route::middleware('guest:admins')->group(function () {
+
             Route::get('/login', [AdminAuthController::class, 'showLoginForm'])
                 ->name('login');
+
             Route::post('/login', [AdminAuthController::class, 'login'])
                 ->name('login.store');
         });
 
         // Auth Admin
+
         Route::middleware('auth:admins')->group(function () {
+
             Route::get('/dashboard', [AdminDashboardController::class, 'index'])
                 ->name('dashboard');
+
             Route::post('/logout', [AdminAuthController::class, 'logout'])
                 ->name('logout');
-// ADMIN CATEGORIES
+
+            // Categories
+
             Route::prefix('categories')
                 ->name('categories.')
                 ->group(function () {
@@ -111,7 +169,8 @@ Route::prefix('admin')
                         ->name('destroy');
                 });
 
-// ADMIN ITEMS
+            // Products
+
             Route::prefix('products')
                 ->name('items.')
                 ->group(function () {
@@ -135,19 +194,51 @@ Route::prefix('admin')
                         ->name('destroy');
                 });
 
-            // PERMISSIONS
+            // Orders
+
+            Route::prefix('orders')
+                ->name('orders.')
+                ->group(function () {
+
+                    Route::get('/', [AdminOrderController::class, 'index'])
+                        ->name('index');
+
+                    Route::get('/{order}', [AdminOrderController::class, 'show'])
+                        ->name('show');
+                });
+
+           // Carts
+
+            Route::prefix('carts')
+                ->name('carts.')
+                ->group(function () {
+
+                    Route::get('/', [AdminCartController::class, 'index'])->name('index');
+                    Route::get('/{cart}', [AdminCartController::class, 'show'])
+                        ->name('show');
+
+                    Route::patch('/{cart}/status', [AdminCartController::class, 'updateStatus'])
+                        ->name('update-status');
+
+                    Route::delete('/{cart}', [AdminCartController::class, 'destroy'])
+                        ->name('destroy');
+                });
+
+            // Permissions
             Route::get('/permissions', [AdminPermissionController::class, 'index'])
                 ->name('permissions.index');
+
             Route::get('/permissions/{admin}/edit', [AdminPermissionController::class, 'edit'])
                 ->name('permissions.edit');
+
             Route::put('/permissions/{admin}', [AdminPermissionController::class, 'update'])
                 ->name('permissions.update');
 
-            // ADMINS (SUPER ADMIN ONLY)
-            Route::middleware('role:super-admin,admins')
-                ->group(function () {
-                    Route::resource('admins', AdminAdminController::class)
-                        ->only(['index', 'create', 'store', 'destroy']);
-                });
+            // Creat Super Admin
+            Route::middleware('role:super-admin,admins')->group(function () {
+
+                Route::resource('admins', AdminAdminController::class)
+                    ->only(['index', 'create', 'store', 'destroy']);
+            });
         });
     });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Services\User\OrderService;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,38 @@ class OrderController extends Controller
     public function __construct(
         protected OrderService $orderService
     ) {}
+
+    public function index()
+    {
+        $orders = auth()
+            ->user()
+            ->orders()
+            ->with('items.item.media')
+            ->latest()
+            ->paginate(10);
+
+        return view(
+            'user.orders.index',
+            compact('orders')
+        );
+    }
+
+    public function show(Order $order)
+    {
+        abort_unless(
+            $order->user_id === auth()->id(),
+            403
+        );
+
+        $order->load([
+            'items.item.media',
+        ]);
+
+        return view(
+            'user.orders.show',
+            compact('order')
+        );
+    }
 
     public function store(Request $request)
     {

@@ -42,19 +42,19 @@
                 <h2>Recent Orders</h2>
                 <table class="table">
                     <thead>
-                        <tr><th>Order</th><th>Total</th><th>Status</th><th>Date</th></tr>
+                    <tr><th>Order</th><th>Total</th><th>Status</th><th>Date</th></tr>
                     </thead>
                     <tbody>
-                        @forelse ($recentOrders as $order)
-                            <tr>
-                                <td>#{{ $order->id }}</td>
-                                <td>${{ number_format($order->total ?? $order->total_price ?? 0, 2) }}</td>
-                                <td><span class="status-pill">{{ $order->status ?? 'new' }}</span></td>
-                                <td>{{ $order->created_at ?? '-' }}</td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="4" class="muted">No orders yet.</td></tr>
-                        @endforelse
+                    @forelse ($recentOrders as $order)
+                        <tr>
+                            <td>#{{ $order->id }}</td>
+                            <td>${{ number_format($order->total ?? $order->total_price ?? 0, 2) }}</td>
+                            <td><span class="status-pill">{{ $order->status ?? 'new' }}</span></td>
+                            <td>{{ $order->created_at ?? '-' }}</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="4" class="muted">No orders yet.</td></tr>
+                    @endforelse
                     </tbody>
                 </table>
             </section>

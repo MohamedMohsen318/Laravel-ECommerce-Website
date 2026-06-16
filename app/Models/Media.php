@@ -14,6 +14,11 @@ class Media extends Model
         'file',
     ];
 
+    public function model()
+    {
+        return $this->morphTo();
+    }
+
     protected $casts = [
         'type' => MediaType::class,
     ];
