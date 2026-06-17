@@ -11,6 +11,7 @@ class CartService
     public function getAllCarts(array $filters = []): LengthAwarePaginator
     {
         return Cart::with(['user', 'items.item'])
+            ->withSum('items as items_count', 'quantity')
             ->when(!empty($filters['status']), function ($query) use ($filters) {
                 $query->where('status', $filters['status']);
             })

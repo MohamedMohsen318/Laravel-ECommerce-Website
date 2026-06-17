@@ -33,7 +33,7 @@ class CartController extends Controller
         return view('admin.cart.show', compact('cart'));
     }
 
-    public function updateStatus(
+    public function update(
         UpdateCartStatusRequest $request,
         Cart $cart
     ): RedirectResponse {

@@ -173,11 +173,23 @@
                         <span>{{ number_format($cart->total, 2) }} EGP</span>
                     </div>
 
-                    <a class="button"
-                       href="{{ route('orders.store') }}"
-                       style="width:100%; text-align:center">
-                        Checkout
-                    </a>
+                    @auth
+                        <form method="POST" action="{{ route('orders.store') }}" class="stack">
+                            @csrf
+                            <input type="hidden" name="checkout_from_cart" value="1">
+                            @foreach($cart->items as $cartItem)
+                                <input type="hidden" name="items[{{ $loop->index }}][item_id]" value="{{ $cartItem->item_id }}">
+                                <input type="hidden" name="items[{{ $loop->index }}][quantity]" value="{{ $cartItem->quantity }}">
+                            @endforeach
+                            <button class="button" type="submit" style="width:100%">
+                                Checkout
+                            </button>
+                        </form>
+                    @else
+                        <a class="button" href="{{ route('login') }}" style="width:100%; text-align:center">
+                            Log in to Checkout
+                        </a>
+                    @endauth
 
                 </div>
 

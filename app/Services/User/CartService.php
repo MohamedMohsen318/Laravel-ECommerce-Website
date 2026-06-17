@@ -100,13 +100,13 @@ class CartService
         return $this->getCart()->clearDiscount();
     }
 
-    public function mergeGuestCart(): void
+    public function mergeGuestCart(?string $sessionId = null): void
     {
         if (!Auth::check()) {
             return;
         }
 
-        $sessionId = Session::getId();
+        $sessionId ??= Session::getId();
 
         $guestCart = Cart::where('session_id', $sessionId)
             ->active()

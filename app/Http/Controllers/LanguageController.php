@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Session;
 
 class LanguageController
 {
-    public function switch($lang)
+    public function update($lang)
     {
         Session::put('locale', $lang);
 

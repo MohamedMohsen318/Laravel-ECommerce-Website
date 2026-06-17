@@ -1,16 +1,28 @@
 <?php
 namespace App\Models;
 
-class CartItem
-{
-    public function __construct(
-        public int $product_id,
-        public string $name,
-        public float $price,
-        public int $quantity
-    ) {}
+use App\Models\Relations\CartItemRelationsTrait;
+use Illuminate\Database\Eloquent\Model;
 
-    public function subtotal(): float
+class CartItem extends Model
+{
+    use CartItemRelationsTrait;
+
+    protected $fillable = [
+        'cart_id',
+        'item_id',
+        'quantity',
+        'price',
+        'options',
+    ];
+
+    protected $casts = [
+        'price' => 'decimal:2',
+        'quantity' => 'integer',
+        'options' => 'array',
+    ];
+
+    public function getTotalAttribute(): float
     {
         return $this->price * $this->quantity;
     }

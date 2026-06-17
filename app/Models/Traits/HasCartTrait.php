@@ -31,6 +31,6 @@ trait HasCartTrait
 
     public function getCartItemsCount(): int
     {
-        return $this->activeCart?->items_count ?? 0;
+        return (int) ($this->activeCart?->items()->sum('quantity') ?? 0);
     }
 }

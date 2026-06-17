@@ -156,6 +156,7 @@
         .table th, .table td { border-bottom: 1px solid #e5e7eb; padding: 13px 12px; text-align: left; vertical-align: top; }
         .table th { color: #475467; font-size: 13px; text-transform: uppercase; }
         .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
         .muted { color: var(--muted); }
         .stack { display: grid; gap: 18px; }
         .checkbox { display: flex; gap: 8px; align-items: center; }
@@ -179,6 +180,7 @@
         <div class="nav-links">
             <a href="{{ route('products.index') }}">Products</a>
             <a href="{{ route('categories.index') }}">Categories</a>
+            <x-cart-icon />
             @if (auth(\App\Enums\AuthGuard::Admins->value)->check())
                 <a href="{{ route('admins.dashboard') }}">Dashboard</a>
                 <a href="{{ route('admins.items.index') }}">Manage Products</a>

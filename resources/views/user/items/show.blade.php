@@ -36,6 +36,19 @@
 
                 <div class="actions">
                     <a class="button secondary" href="{{ route('products.index') }}">Back to Products</a>
+                    <form method="POST" action="{{ route('cart.add') }}" class="actions">
+                        @csrf
+                        <input type="hidden" name="item_id" value="{{ $item->id }}">
+                        <input
+                            type="number"
+                            name="quantity"
+                            value="1"
+                            min="1"
+                            max="{{ max(1, min(100, $item->stock)) }}"
+                            style="width:82px"
+                        >
+                        <button class="button secondary" type="submit">Add to Cart</button>
+                    </form>
                     @auth
                         <form method="POST" action="{{ route('orders.store') }}">
                             @csrf

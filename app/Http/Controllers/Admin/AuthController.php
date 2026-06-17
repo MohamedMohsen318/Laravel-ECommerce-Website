@@ -13,10 +13,10 @@ class AuthController extends Controller
     ) {
         //
     }
-    public function showLoginForm(){
+    public function create(){
         return view('admin.auth.login');
     }
-    public function login(AdminLoginRequest $request){
+    public function store(AdminLoginRequest $request){
         $success = $this->authService->login(
             $request->validated(),
             $request->boolean('remember')
@@ -28,7 +28,7 @@ class AuthController extends Controller
         $request->session()->regenerate();
         return redirect()->route('admins.dashboard');
     }
-    public function logout(Request $request){
+    public function destroy(Request $request){
         $this->authService->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

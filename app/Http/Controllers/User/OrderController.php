@@ -4,13 +4,15 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Services\User\CartService;
 use App\Services\User\OrderService;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
     public function __construct(
-        protected OrderService $orderService
+        protected OrderService $orderService,
+        protected CartService $cartService
     ) {}
 
     public function index()
@@ -57,6 +59,10 @@ class OrderController extends Controller
             auth()->id(),
             $data['items']
         );
+
+        if ($request->boolean('checkout_from_cart')) {
+            $this->cartService->clearCart();
+        }
 
         return redirect()
             ->route('products.index')

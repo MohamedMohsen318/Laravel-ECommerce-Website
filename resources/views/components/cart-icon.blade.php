@@ -1,20 +1,23 @@
 @php
     $count = 0;
 
-    if (auth()->check()) {
+    if (! \Illuminate\Support\Facades\Schema::hasTable('carts')) {
+        $count = 0;
+    } elseif (auth()->check()) {
         $count = auth()->user()->getCartItemsCount();
     } else {
-        $count = \App\Models\Cart::query()
+        $cart = \App\Models\Cart::query()
             ->where('session_id', session()->getId())
-            ->where('status', \App\Enums\CartStatus::ACTIVE)
-            ->value('items_count') ?? 0;
+            ->where('status', \App\Enums\CartStatus::ACTIVE->value)
+            ->first();
+
+        $count = (int) ($cart?->items()->sum('quantity') ?? 0);
     }
 @endphp
 
 <a href="{{ route('cart.index') }}"
    style="position:relative; display:inline-flex; align-items:center; gap:6px; font-weight:700; color:var(--ink)">
-
-    🛒 Cart
+    Cart
 
     @if($count > 0)
         <span style="
@@ -28,5 +31,4 @@
             {{ $count > 99 ? '99+' : $count }}
         </span>
     @endif
-
 </a>
