@@ -185,6 +185,7 @@
                 <a href="{{ route('admins.dashboard') }}">Dashboard</a>
                 <a href="{{ route('admins.items.index') }}">Manage Products</a>
                 <a href="{{ route('admins.categories.index') }}">Manage Categories</a>
+                <a href="{{ route('admins.orders.index') }}">Orders</a>
                 @if (auth(\App\Enums\AuthGuard::Admins->value)->user()?->hasRole(\App\Enums\AdminRole::SuperAdmin->value))
                     <a class="nav-link-featured" href="{{ route('admins.admins.create') }}">Add Admin</a>
                     <a href="{{ route('admins.admins.index') }}">Admins</a>

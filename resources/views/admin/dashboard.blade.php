@@ -22,6 +22,7 @@
             <div class="actions">
                 <a class="button secondary" href="{{ route('admins.categories.index') }}">Categories</a>
                 <a class="button" href="{{ route('admins.items.index') }}">Products</a>
+                <a class="button secondary" href="{{ route('admins.orders.index') }}">Orders</a>
                 @if (auth(\App\Enums\AuthGuard::Admins->value)->user()?->hasRole(\App\Enums\AdminRole::SuperAdmin->value))
                     <a class="button" href="{{ route('admins.admins.create') }}">Add Admin</a>
                     <a class="button secondary" href="{{ route('admins.admins.index') }}">Admins</a>
@@ -47,9 +48,9 @@
                     <tbody>
                     @forelse ($recentOrders as $order)
                         <tr>
-                            <td>#{{ $order->id }}</td>
+                            <td><a href="{{ route('admins.orders.show', $order) }}">#{{ $order->id }}</a></td>
                             <td>${{ number_format($order->total ?? $order->total_price ?? 0, 2) }}</td>
-                            <td><span class="status-pill">{{ $order->status ?? 'new' }}</span></td>
+                            <td><span class="status-pill">{{ $order->status?->value ?? 'new' }}</span></td>
                             <td>{{ $order->created_at ?? '-' }}</td>
                         </tr>
                     @empty

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PermissionController as AdminPermissionController;
 use App\Http\Controllers\Admin\AdminController as AdminAdminController;
 use App\Http\Controllers\Admin\ItemController as AdminItemController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\User\CartClearController;
@@ -178,6 +179,15 @@ Route::prefix('admin')
                         ->name('update-status');
                     Route::delete('/{cart}', [AdminCartController::class, 'destroy'])
                         ->name('destroy');
+                });
+
+            Route::prefix('orders')
+                ->name('orders.')
+                ->group(function () {
+                    Route::get('/', [AdminOrderController::class, 'index'])
+                        ->name('index');
+                    Route::get('/{order}', [AdminOrderController::class, 'show'])
+                        ->name('show');
                 });
 
             // ADMINS (SUPER ADMIN ONLY)

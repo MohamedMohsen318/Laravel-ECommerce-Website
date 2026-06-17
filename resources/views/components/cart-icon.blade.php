@@ -3,8 +3,8 @@
 
     if (! \Illuminate\Support\Facades\Schema::hasTable('carts')) {
         $count = 0;
-    } elseif (auth()->check()) {
-        $count = auth()->user()->getCartItemsCount();
+    } elseif (auth(\App\Enums\AuthGuard::Web->value)->check()) {
+        $count = auth(\App\Enums\AuthGuard::Web->value)->user()->getCartItemsCount();
     } else {
         $cart = \App\Models\Cart::query()
             ->where('session_id', session()->getId())
