@@ -32,10 +32,9 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        abort_unless(
-            $order->user_id === auth()->id(),
-            403
-        );
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
 
         $order->load([
             'items.item.media',
