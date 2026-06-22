@@ -13,6 +13,12 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('status')->default('pending');
             $table->decimal('total_price', 10, 2)->default(0);
+            $table->foreignId('coupon_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+            $table->decimal('discount_amount', 8, 2)->default(0);
+            $table->decimal('final_total', 8, 2)->default(0);
             $table->timestamps();
         });
     }

@@ -16,6 +16,8 @@ use App\Http\Controllers\User\CartController as UserCartController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ItemController as UserItemController;
 use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\CouponController;
+use App\Http\Controllers\Admin;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -104,6 +106,8 @@ Route::prefix('cart')
 Route::middleware('auth')->group(function () {
     Route::post('/orders', [UserOrderController::class, 'store'])
         ->name('orders.store');
+    Route::post('coupon/apply',    [CouponController::class, 'apply'])->name('coupon.apply');
+    Route::delete('coupon/remove', [CouponController::class, 'remove'])->name('coupon.remove');
 });
 
 
@@ -119,6 +123,7 @@ Route::prefix('admin')
                 ->name('login');
             Route::post('/login', [AdminAuthController::class, 'store'])
                 ->name('login.store');
+
         });
 
         // Auth Admin
@@ -127,6 +132,14 @@ Route::prefix('admin')
                 ->name('dashboard');
             Route::post('/logout', [AdminAuthController::class, 'destroy'])
                 ->name('logout');
+
+            Route::resource('coupons', Admin\CouponController::class);
+
+            Route::patch('coupons/{coupon}/toggle', [Admin\CouponController::class, 'toggle'])
+                ->name('coupons.toggle');
+
+            Route::get('coupons/{coupon}/stats', [Admin\CouponController::class, 'stats'])
+                ->name('coupons.stats');
 // ADMIN CATEGORIES
             Route::prefix('categories')
                 ->name('categories.')

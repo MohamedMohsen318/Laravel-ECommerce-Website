@@ -14,9 +14,15 @@ class Order extends Model
         'user_id',
         'status',
         'total_price',
+        'coupon_id',
+        'discount_amount',
+        'final_total',
     ];
 
     protected $casts = [
         'status' => OrderStatus::class,
+        'total_price' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'final_total' => 'decimal:2',
     ];
 }

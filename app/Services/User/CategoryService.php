@@ -46,13 +46,17 @@ class CategoryService
 
     private function categoryAndDescendantIds(Category $category): array
     {
-        $ids = [$category->id];
-        $children = Category::where('parent_id', $category->id)->get();
 
-        foreach ($children as $child) {
-            $ids = array_merge($ids, $this->categoryAndDescendantIds($child));
+        $ids = [];
+        $stack = [$category];
+        while (!empty($stack)) {
+            $node = array_pop($stack);
+            $ids[] = $node->id;
+            $children = Category::where('parent_id', $node->id)->get();
+            foreach ($children as $child) {
+                $stack[] = $child;
+            }
         }
-
         return $ids;
     }
 }
