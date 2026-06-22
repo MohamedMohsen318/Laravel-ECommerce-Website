@@ -33,14 +33,15 @@ class Category extends Model
 
     public function fullPath(): string
     {
-        $slugs = [$this->slug];
+        $slugs = collect();
+
         $parent = $this->parent;
 
         while ($parent) {
-            array_unshift($slugs, $parent->slug);
+            $slugs->prepend($parent->slug);
             $parent = $parent->parent;
         }
 
-        return implode('/', $slugs);
+        return $slugs->push($this->slug)->implode('/');
     }
 }
