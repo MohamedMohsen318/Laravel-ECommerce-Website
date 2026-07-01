@@ -8,6 +8,7 @@ use App\Models\DiscountUsage;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+
 trait HasDiscounts
 {
     public function hasUsedDiscount(Discount $discount): bool{
@@ -21,16 +22,19 @@ trait HasDiscounts
             ->count();
     }
     public function hasReachedDiscountLimit(Discount $discount): bool{
-        return $discount->max_uses_per_user
+        return $discount->max_uses_per_user > 0
             && $this->discountUsageCount($discount) >= $discount->max_uses_per_user;
     }
     public function getIsValidAttribute(): bool{
-        return
-            $this->is_active && ! $this->starts_at?->isFuture() && ! $this->expires_at?->isPast()
+        return $this->status === 'active'
+            && ! $this->starts_at?->isFuture() && ! $this->expires_at?->isPast()
             && (! $this->max_uses || $this->used_count < $this->max_uses);
     }
     public function calculateDiscount(float $amount): float{
         if ($amount < $this->min_order_amount) {
+            return 0;
+        }
+        if (! $this->meetsCondition($amount)) {
             return 0;
         }
         $discount = match ($this->type) {
@@ -40,8 +44,16 @@ trait HasDiscounts
         if ($this->type === DiscountType::Percentage && $this->max_discount_amount) {
             $discount = min($discount, $this->max_discount_amount);
         }
-
         return round($discount, 2);
+    }
+    private function meetsCondition(float $amount): bool{
+        if (! $this->is_condition) {
+            return true;}
+        if ($this->min_condition_value !== null && $amount < $this->min_condition_value) {
+            return false;}
+        if ($this->max_condition_value !== null && $amount > $this->max_condition_value) {
+            return false;}
+        return true;
     }
     public function recordUsage(User $user, Order $order, float $discountAmount): void{
         DiscountUsage::create([
@@ -54,12 +66,12 @@ trait HasDiscounts
         $this->increment('used_count');
     }
     public function usageCountForUser(int $userId): int{
-        return $this->discountUsages()
+        return $this->usages()
             ->where('user_id', $userId)
             ->count();
     }
     public function scopeActive(Builder $query): Builder{
-        return $query->where('is_active', true);
+        return $query->where('status', 'active');
     }
     public function scopeValid(Builder $query): Builder{
         return $query
