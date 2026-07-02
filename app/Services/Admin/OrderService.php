@@ -7,8 +7,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class OrderService
 {
-    public function paginate(): LengthAwarePaginator
-    {
+    public function paginate(): LengthAwarePaginator{
         return Order::with([
             'user',
             'items.item.media',
@@ -16,9 +15,7 @@ class OrderService
             ->latest()
             ->paginate(15);
     }
-
-    public function find(Order $order): Order
-    {
+    public function find(Order $order): Order{
         return $order->load([
             'user',
             'items.item.media',
