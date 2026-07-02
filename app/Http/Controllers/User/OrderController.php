@@ -60,15 +60,14 @@ class OrderController extends Controller
             $this->cartService->clearCart();
         }
 
-        return redirect()
+        $redirect = redirect()
             ->route('products.index')
-            ->with('success', 'Order created successfully.')
-            ->when(
-                $result['discount_warning'],
-                fn ($redirect) => $redirect->with(
-                    'warning',
-                    $result['discount_warning']
-                )
-            );
+            ->with('success', 'Order created successfully.');
+
+        if ($result['discount_warning']) {
+            $redirect->with('warning', $result['discount_warning']);
+        }
+
+        return $redirect;
     }
 }
