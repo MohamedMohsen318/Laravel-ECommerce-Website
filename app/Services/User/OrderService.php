@@ -4,9 +4,9 @@ namespace App\Services\User;
 
 use App\Enums\ItemStatus;
 use App\Enums\OrderStatus;
-use App\Exceptions\DiscountException;
 use App\Models\Item;
 use App\Models\Order;
+use App\Services\DiscountException;
 use App\Services\DiscountService;
 use Illuminate\Support\Facades\DB;
 

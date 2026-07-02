@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
-use App\Exceptions\DiscountException;
+use Exception;
 use App\Models\Discount;
 use App\Models\DiscountUsage;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 
 class DiscountService
@@ -188,5 +189,15 @@ class DiscountService
     private function formatAmount(float $amount): string
     {
         return number_format($amount, 2) . ' ' . self::CURRENCY;
+    }
+}
+
+class DiscountException extends Exception
+{
+    public function render(): RedirectResponse
+    {
+        return back()->withErrors([
+            'discount' => $this->getMessage(),
+        ]);
     }
 }

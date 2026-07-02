@@ -3,10 +3,10 @@
 namespace App\Services\User;
 
 use App\Enums\CartStatus;
-use App\Exceptions\DiscountException;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Item;
+use App\Services\DiscountException;
 use App\Services\DiscountService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
