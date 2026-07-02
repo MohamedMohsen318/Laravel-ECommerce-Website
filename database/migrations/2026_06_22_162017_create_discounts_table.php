@@ -18,7 +18,7 @@ return new class extends Migration
             $table->boolean('is_condition')->default(false);
             $table->decimal('min_condition_value', 8, 2)->nullable();
             $table->decimal('max_condition_value', 8, 2)->nullable();
-            $table->enum('status', ['active', 'scheduled', 'cancelled',])->default('active');
+            $table->enum('status', ['active', 'scheduled', 'cancelled'])->default('active');
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->unsignedInteger('max_uses')->nullable();

@@ -124,6 +124,8 @@ class CartService
         $userCart = Auth::user()->getOrCreateCart();
 
         DB::transaction(function () use ($guestCart, $userCart) {
+            $discountCode = $userCart->discount_code ?: $guestCart->discount_code;
+
             $existingItems = $userCart->items()
                 ->get()
                 ->keyBy('item_id');
@@ -152,8 +154,34 @@ class CartService
                 $userCart->items()->insert($newItems);
             }
 
+            $userCart->refresh()->load('items');
+            $this->refreshMergedDiscount($userCart, $discountCode);
+
             $guestCart->items()->delete();
             $guestCart->markAsAbandoned();
         });
+    }
+
+    private function refreshMergedDiscount(Cart $cart, ?string $discountCode): void
+    {
+        if (! $discountCode) {
+            $cart->clearDiscount();
+            return;
+        }
+
+        try {
+            $result = app(DiscountService::class)->validate(
+                $discountCode,
+                $cart->subtotal,
+                Auth::user()
+            );
+
+            $cart->update([
+                'discount_code' => $result['discount']->code,
+                'discount_amount' => $result['discount_amount'],
+            ]);
+        } catch (DiscountException) {
+            $cart->clearDiscount();
+        }
     }
 }

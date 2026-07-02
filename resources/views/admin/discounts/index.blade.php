@@ -36,8 +36,11 @@
                 <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>
                     Active
                 </option>
-                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>
-                    Inactive
+                <option value="scheduled" {{ request('status') === 'scheduled' ? 'selected' : '' }}>
+                    Scheduled
+                </option>
+                <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>
+                    Cancelled
                 </option>
             </select>
 
@@ -121,10 +124,10 @@
 
                                 <button type="submit"
                                         class="px-2 py-1 rounded text-xs font-semibold
-                                            {{ $discount->is_active
+                                            {{ $discount->status === 'active'
                                                 ? 'bg-green-100 text-green-700'
                                                 : 'bg-red-100 text-red-700' }}">
-                                    {{ $discount->is_active ? 'Active' : 'Inactive' }}
+                                    {{ ucfirst($discount->status) }}
                                 </button>
                             </form>
                         </td>

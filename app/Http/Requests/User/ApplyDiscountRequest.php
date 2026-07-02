@@ -18,13 +18,4 @@ class ApplyDiscountRequest extends FormRequest
         ];
     }
 
-    public function messages(): array
-    {
-        return [
-            'code.required' => 'Discount code is required.',
-            'code.string'   => 'Discount code must be a valid string.',
-            'code.min'      => 'Discount code must be at least 3 characters.',
-            'code.max'      => 'Discount code cannot exceed 50 characters.',
-        ];
-    }
 }

@@ -147,12 +147,14 @@
                     </div>
                 </div>
 
-                {{-- Active Status --}}
-                <div class="mb-6 flex items-center gap-2">
-                    <input type="checkbox" name="is_active" value="1" id="is_active"
-                           {{ old('is_active', '1') ? 'checked' : '' }}
-                           class="w-4 h-4">
-                    <label for="is_active" class="text-sm font-medium">Discount is Active</label>
+                {{-- Status --}}
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-1">Status</label>
+                    <select name="status" class="w-full border rounded-lg px-3 py-2">
+                        <option value="active" @selected(old('status', 'active') === 'active')>Active</option>
+                        <option value="scheduled" @selected(old('status') === 'scheduled')>Scheduled</option>
+                        <option value="cancelled" @selected(old('status') === 'cancelled')>Cancelled</option>
+                    </select>
                 </div>
 
                 <div class="flex gap-3">

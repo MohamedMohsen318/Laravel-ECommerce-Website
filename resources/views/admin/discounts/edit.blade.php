@@ -85,9 +85,13 @@
                     </label>
                 </div>
 
-                <label class="checkbox">
-                    <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $discount->is_active))>
-                    Discount is active
+                <label class="field">
+                    <span>Status</span>
+                    <select name="status">
+                        <option value="active" @selected(old('status', $discount->status) === 'active')>Active</option>
+                        <option value="scheduled" @selected(old('status', $discount->status) === 'scheduled')>Scheduled</option>
+                        <option value="cancelled" @selected(old('status', $discount->status) === 'cancelled')>Cancelled</option>
+                    </select>
                 </label>
 
                 <div class="actions">

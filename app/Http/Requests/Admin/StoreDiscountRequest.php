@@ -31,7 +31,7 @@ class StoreDiscountRequest extends FormRequest
             'is_condition' => ['boolean'],
             'min_condition_value' => [Rule::requiredIf($hasCondition), 'nullable', 'numeric', 'min:0',],
             'max_condition_value' => ['nullable', 'numeric','min:0','gte:min_condition_value',],
-            'is_active' => ['boolean'],
+            'status' => ['required', Rule::in(['active', 'scheduled', 'cancelled'])],
             'starts_at' => ['nullable', 'date'],
             'expires_at' => ['nullable', 'date', 'after:starts_at'],
             'max_uses' => ['nullable', 'integer', 'min:1'],
@@ -45,7 +45,7 @@ class StoreDiscountRequest extends FormRequest
 
         $this->merge([
             'code' => $this->code ? strtoupper(trim((string) $this->code)) : null,
-            'is_active' => $this->boolean('is_active'),
+            'status' => $this->status ?: 'active',
             'is_condition' => $hasCondition,
             'min_condition_value' => $hasCondition ? $this->min_condition_value : null,
             'max_condition_value' => $hasCondition ? $this->max_condition_value : null,

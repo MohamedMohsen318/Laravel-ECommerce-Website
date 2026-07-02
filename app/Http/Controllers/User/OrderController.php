@@ -24,26 +24,16 @@ class OrderController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view(
-            'user.orders.index',
-            compact('orders')
-        );
+        return view('user.orders.index', compact('orders'));
     }
 
     public function show(Order $order)
     {
-        if ($order->user_id !== auth()->id()) {
-            abort(403);
-        }
+        abort_if($order->user_id !== auth()->id(), 403);
 
-        $order->load([
-            'items.item.media',
-        ]);
+        $order->load('items.item.media');
 
-        return view(
-            'user.orders.show',
-            compact('order')
-        );
+        return view('user.orders.show', compact('order'));
     }
 
     public function store(Request $request)
@@ -54,17 +44,31 @@ class OrderController extends Controller
             'items.*.quantity' => ['required', 'integer', 'min:1'],
         ]);
 
-        $this->orderService->createOrder(
+        $checkoutFromCart = $request->boolean('checkout_from_cart');
+
+        $discountCode = $checkoutFromCart
+            ? $this->cartService->getCart()->discount_code
+            : null;
+
+        $result = $this->orderService->createOrder(
             auth()->id(),
-            $data['items']
+            $data['items'],
+            $discountCode
         );
 
-        if ($request->boolean('checkout_from_cart')) {
+        if ($checkoutFromCart) {
             $this->cartService->clearCart();
         }
 
         return redirect()
             ->route('products.index')
-            ->with('success', 'Order created successfully.');
+            ->with('success', 'Order created successfully.')
+            ->when(
+                $result['discount_warning'],
+                fn ($redirect) => $redirect->with(
+                    'warning',
+                    $result['discount_warning']
+                )
+            );
     }
 }

@@ -18,7 +18,6 @@ use App\Http\Controllers\User\{
     CartController as UserCartController,
     CartDiscountController,
     CategoryController,
-    DiscountController,
     ItemController as UserItemController,
     OrderController as UserOrderController,
     ProfileController
@@ -76,12 +75,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('orders/{order}', [UserOrderController::class, 'show'])
         ->name('orders.show');
-
-    Route::post('discount/apply', [DiscountController::class, 'apply'])
-        ->name('discount.apply');
-
-    Route::delete('discount/remove', [DiscountController::class, 'remove'])
-        ->name('discount.remove');
 });
 
 

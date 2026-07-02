@@ -20,7 +20,7 @@ class DiscountController extends Controller
         $discounts = Discount::withCount('usages')
             ->withSum('usages', 'discount_amount')
             ->when(request('search'), fn ($query, $search) => $query->where('code', 'like', "%{$search}%"))
-            ->when(request('status'), fn ($query, $status) => $query->where('is_active', $status === 'active'))
+            ->when(request('status'), fn ($query, $status) => $query->where('status', $status))
             ->latest()
             ->paginate(20);
 
@@ -79,9 +79,11 @@ class DiscountController extends Controller
 
     public function toggle(Discount $discount): RedirectResponse
     {
-        $discount->update(['is_active' => ! $discount->is_active]);
+        $discount->update([
+            'status' => $discount->status === 'active' ? 'cancelled' : 'active',
+        ]);
 
-        $status = $discount->is_active ? 'enabled' : 'disabled';
+        $status = $discount->status === 'active' ? 'enabled' : 'disabled';
 
         return back()->with('success', "Discount {$status} successfully.");
     }

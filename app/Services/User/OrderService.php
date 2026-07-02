@@ -2,18 +2,30 @@
 
 namespace App\Services\User;
 
-use App\Models\Order;
-use App\Models\Item;
 use App\Enums\ItemStatus;
 use App\Enums\OrderStatus;
+use App\Exceptions\DiscountException;
+use App\Models\Item;
+use App\Models\Order;
+use App\Services\DiscountService;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
-    public function createOrder(int $userId, array $items): Order
-    {
-        return DB::transaction(function () use ($userId, $items) {
+    public function __construct(
+        protected DiscountService $discountService
+    ) {}
 
+    public function createOrder(
+        int $userId,
+        array $items,
+        ?string $discountCode = null
+    ): array {
+        return DB::transaction(function () use (
+            $userId,
+            $items,
+            $discountCode
+        ) {
             $total = 0;
 
             $order = Order::create([
@@ -26,31 +38,81 @@ class OrderService
 
                 $item = Item::findOrFail($itemData['item_id']);
 
-                // 🧠 check availability
-                if ($item->status !== ItemStatus::Available || $item->stock < $itemData['quantity']) {
-                    throw new \Exception('Item not available or out of stock');
+                if (
+                    $item->status !== ItemStatus::Available ||
+                    $item->stock < $itemData['quantity']
+                ) {
+                    throw new \Exception(
+                        'Item not available or out of stock'
+                    );
                 }
 
                 $price = $item->discount_price ?? $item->price;
 
-                // create order item
                 $order->items()->create([
                     'item_id' => $item->id,
                     'quantity' => $itemData['quantity'],
                     'price' => $price,
                 ]);
 
-                // decrease stock
-                $item->decrement('stock', $itemData['quantity']);
+                $item->decrement(
+                    'stock',
+                    $itemData['quantity']
+                );
 
-                $total += $price * $itemData['quantity'];
+                $total +=
+                    $price * $itemData['quantity'];
             }
 
             $order->update([
                 'total_price' => $total,
             ]);
 
-            return $order;
+            $discountWarning = null;
+
+            if ($discountCode) {
+                $discountWarning = $this->applyDiscountToOrder(
+                    $order,
+                    $discountCode,
+                    $total,
+                    $userId
+                );
+            }
+
+            return [
+                'order' => $order->fresh(),
+                'discount_warning' => $discountWarning,
+            ];
         });
+    }
+
+    private function applyDiscountToOrder(
+        Order $order,
+        string $discountCode,
+        float $orderTotal,
+        int $userId
+    ): ?string {
+        try {
+            $result = $this->discountService->validate(
+                $discountCode,
+                $orderTotal,
+                $order->user
+            );
+
+            $this->discountService->apply(
+                $result['discount'],
+                $order,
+                $order->user,
+                $result['discount_amount']
+            );
+
+            return null;
+        } catch (DiscountException $exception) {
+            return sprintf(
+                'Discount code "%s" could not be applied: %s',
+                $discountCode,
+                $exception->getMessage()
+            );
+        }
     }
 }
