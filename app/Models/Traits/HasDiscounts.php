@@ -76,11 +76,9 @@ trait HasDiscounts
             ->count();
     }
 
-    public function scopeActive(Builder $query): Builder
-    {
+    public function scopeActive(Builder $query): Builder{
         return $query->where('status', 'active');
     }
-
     public function scopeValid(Builder $query): Builder
     {
         return $query
