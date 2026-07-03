@@ -32,8 +32,7 @@ class DiscountController extends Controller
         return view('admin.discounts.create');
     }
 
-    public function store(StoreDiscountRequest $request): RedirectResponse
-    {
+    public function store(StoreDiscountRequest $request): RedirectResponse{
         Discount::create($request->validated());
 
         return redirect()

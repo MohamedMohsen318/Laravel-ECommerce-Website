@@ -103,19 +103,15 @@ class CartService
     public function applyDiscount(string $code): array
     {
         $cart = $this->getCart()->loadMissing('items');
-
-        try {
-            $result = app(DiscountService::class)->validate(
+        try {$result = app(DiscountService::class)->validate(
                 $code,
                 $cart->subtotal,
                 Auth::user()
             );
-
             $cart->update([
                 'discount_code' => $result['discount']->code,
                 'discount_amount' => $result['discount_amount'],
             ]);
-
             return [
                 'success' => true,
                 'message' => $result['message'],

@@ -182,7 +182,6 @@ Route::prefix('admin')
                 ->names('items')
                 ->parameters(['products' => 'item']);
 
-            Route::resource('discounts', AdminDiscountController::class);
 
             Route::resource('admins', AdminController::class)
                 ->only(['index', 'create', 'store', 'destroy'])
@@ -190,8 +189,9 @@ Route::prefix('admin')
 
             // Discounts Extra Routes
 
+            Route::resource('discounts', AdminDiscountController::class);
 
-            Route::patch(
+            Route::put(
                 'discounts/{discount}/toggle',
                 [AdminDiscountController::class, 'toggle']
             )->name('discounts.toggle');

@@ -14,19 +14,12 @@ class DiscountService
 {
     private const CURRENCY = 'EGP';
 
-    public function validate(
-        string $code,
-        float $orderAmount,
-        ?User $user
-    ): array {
+    public function validate(string $code, float $orderAmount, ?User $user): array {
         $discount = $this->findValidDiscount($code);
-
         $this->assertOrderAmountConstraints($discount, $orderAmount);
         $this->assertGlobalUsageLimit($discount);
         $this->assertUserUsageLimit($discount, $user);
-
         $discountAmount = $discount->calculateDiscount($orderAmount);
-
         return [
             'discount' => $discount,
             'discount_amount' => $discountAmount,
@@ -112,40 +105,27 @@ class DiscountService
         return $discount;
     }
 
-    private function assertOrderAmountConstraints(
-        Discount $discount,
-        float $orderAmount
-    ): void {
+    private function assertOrderAmountConstraints(Discount $discount, float $orderAmount): void {
         $minimumAmount = (float) $discount->min_order_amount;
-
         if ($orderAmount < $minimumAmount) {
             throw new DiscountException(sprintf(
                 'A minimum order amount of %s is required to use this discount.',
                 $this->formatAmount($minimumAmount)
             ));
         }
-
-        if (! $discount->is_condition) {
-            return;
-        }
-
+        if (! $discount->is_condition) {return;}
         $conditionMin = (float) $discount->min_condition_value;
-
         $conditionMax = $discount->max_condition_value !== null
             ? (float) $discount->max_condition_value
             : null;
-
         if ($orderAmount < $conditionMin) {
             throw new DiscountException(sprintf(
                 'This discount requires an order amount of at least %s.',
                 $this->formatAmount($conditionMin)
             ));
         }
-
-        if (
-            $conditionMax !== null &&
-            $orderAmount > $conditionMax
-        ) {
+        if ($conditionMax !== null &&
+            $orderAmount > $conditionMax) {
             throw new DiscountException(sprintf(
                 'This discount can only be used for orders up to %s.',
                 $this->formatAmount($conditionMax)
@@ -153,30 +133,19 @@ class DiscountService
         }
     }
 
-    private function assertGlobalUsageLimit(
-        Discount $discount
-    ): void {
-        if (
-            $discount->max_uses &&
+    private function assertGlobalUsageLimit(Discount $discount): void {
+        if ($discount->max_uses &&
             $discount->used_count >= $discount->max_uses
-        ) {
-            throw new DiscountException(
+        ) {throw new DiscountException(
                 'This discount has reached its maximum usage limit.'
             );
         }
     }
-    private function assertUserUsageLimit(
-        Discount $discount,
-        ?User $user
-    ): void {
-        if (! $user || ! $discount->max_uses_per_user) {
-            return;
-        }
-
+    private function assertUserUsageLimit(Discount $discount, ?User $user): void {
+        if (! $user || ! $discount->max_uses_per_user) {return;}
         if ($user->hasReachedDiscountLimit($discount)) {
             throw new DiscountException(
-                'You have reached the maximum number of uses for this discount.'
-            );
+                'You have reached the maximum number of uses for this discount.');
         }
     }
 
