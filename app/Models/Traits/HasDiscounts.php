@@ -17,7 +17,6 @@ trait HasDiscounts
             && ! $this->expires_at?->isPast()
             && (! $this->max_uses || $this->used_count < $this->max_uses);
     }
-
     public function calculateDiscount(float $amount): float
     {
         if ($amount < $this->min_order_amount) {
