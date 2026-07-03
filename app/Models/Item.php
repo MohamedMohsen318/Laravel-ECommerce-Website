@@ -43,4 +43,14 @@ class Item extends Model
     {
         return $this->translate('en')?->description;
     }
+
+    public function averageRating(): float
+    {
+        return round($this->reviews()->avg('rating') ?? 0, 1);
+    }
+
+    public function reviewsCount(): int
+    {
+        return $this->reviews()->count();
+    }
 }

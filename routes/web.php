@@ -9,7 +9,9 @@ use App\Http\Controllers\Admin\{
     DashboardController as AdminDashboardController,
     ItemController as AdminItemController,
     OrderController as AdminOrderController,
-    PermissionController as AdminPermissionController
+    PermissionController as AdminPermissionController,
+    ProductCommentController as AdminCommentController,
+    ProductReviewController as AdminReviewController
 };
 
 use App\Http\Controllers\User\{
@@ -20,6 +22,8 @@ use App\Http\Controllers\User\{
     CategoryController,
     ItemController as UserItemController,
     OrderController as UserOrderController,
+    ProductCommentController,
+    ProductReviewController,
     ProfileController
 };
 
@@ -75,6 +79,26 @@ Route::middleware('auth')->group(function () {
 
     Route::get('orders/{order}', [UserOrderController::class, 'show'])
         ->name('orders.show');
+
+    Route::prefix('products/{item}')
+        ->name('products.')
+        ->group(function () {
+            Route::post('reviews', [ProductReviewController::class, 'store'])
+                ->name('reviews.store');
+            Route::delete('reviews', [ProductReviewController::class, 'destroy'])
+                ->name('reviews.destroy');
+
+            Route::post('comments', [ProductCommentController::class, 'store'])
+                ->name('comments.store');
+        });
+
+    Route::controller(ProductCommentController::class)
+        ->prefix('comments/{comment}')
+        ->name('comments.')
+        ->group(function () {
+            Route::put('/', 'update')->name('update');
+            Route::delete('/', 'destroy')->name('destroy');
+        });
 });
 
 
@@ -203,5 +227,30 @@ Route::prefix('admin')
 
             Route::resource('orders', AdminOrderController::class)
                 ->only(['index', 'show']);
+
+            // Product Feedback
+
+
+            Route::prefix('reviews')
+                ->name('reviews.')
+                ->controller(AdminReviewController::class)
+                ->group(function () {
+
+                    Route::get('/', 'index')->name('index')
+                        ->middleware('permission:view-product-feedback');
+                    Route::delete('{review}', 'destroy')->name('destroy')
+                        ->middleware('permission:delete-product-feedback');
+                });
+
+            Route::prefix('comments')
+                ->name('comments.')
+                ->controller(AdminCommentController::class)
+                ->group(function () {
+
+                    Route::get('/', 'index')->name('index')
+                        ->middleware('permission:view-product-feedback');
+                    Route::delete('{comment}', 'destroy')->name('destroy')
+                        ->middleware('permission:delete-product-feedback');
+                });
         });
     });

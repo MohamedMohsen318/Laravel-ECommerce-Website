@@ -8,4 +8,5 @@ enum PermissionGroup: string{
     case Discounts = 'discounts';
     case Orders = 'orders';
     case Admins = 'admins';
+    case ProductFeedback = 'product-feedback';
 }

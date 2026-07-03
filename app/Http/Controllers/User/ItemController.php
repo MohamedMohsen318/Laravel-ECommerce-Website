@@ -22,7 +22,13 @@ class ItemController extends Controller
     public function show(Item $item): View
     {
         abort_unless($item->is_active, 404);
-        $item->load(['media', 'categories.translations']);
+        $item->load([
+            'media',
+            'categories.translations',
+            'reviews.user',
+            'comments.user',
+            'comments.replies',
+        ]);
 
         return view('user.items.show', compact('item'));
     }

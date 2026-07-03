@@ -54,8 +54,10 @@ class RolesAndPermissionsSeeder extends Seeder
         return [
             PermissionGroup::Products->value => PermissionAction::values(),
             PermissionGroup::Categories->value => PermissionAction::values(),
+            PermissionGroup::Discounts->value => PermissionAction::values(),
             PermissionGroup::Orders->value => PermissionAction::values(),
             PermissionGroup::Admins->value => PermissionAction::values(),
+            PermissionGroup::ProductFeedback->value => PermissionAction::values(),
         ];
     }
     private function createPermissions(array $permissionNames): array

@@ -418,6 +418,69 @@
             flex-wrap: wrap;
         }
 
+        .hidden {
+            display: none;
+        }
+
+        .link-button {
+            border: 0;
+            background: transparent;
+            padding: 0;
+            color: var(--brand);
+            cursor: pointer;
+            font: inherit;
+            font-weight: 850;
+            text-decoration: underline;
+        }
+
+        .reviews-header,
+        .rating-summary,
+        .comment-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .reviews-header {
+            justify-content: space-between;
+        }
+
+        .rating-stars {
+            color: var(--gold);
+            font-weight: 950;
+            letter-spacing: 0;
+        }
+
+        .review-item,
+        .comment-item {
+            display: grid;
+            gap: 10px;
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--surface);
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .rating-input label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            width: auto;
+            font-weight: 850;
+        }
+
+        .rating-input input {
+            width: 17px;
+            min-height: 17px;
+        }
+
         @media (max-width: 920px) {
             .nav {
                 grid-template-columns: 1fr;
@@ -487,6 +550,8 @@
             <a href="{{ route('admins.categories.index') }}">{{ $label('Manage Categories', 'إدارة الأقسام') }}</a>
             <a href="{{ route('admins.discounts.index') }}">{{ $label('Discounts', 'الخصومات') }}</a>
             <a href="{{ route('admins.orders.index') }}">{{ $label('Orders', 'الطلبات') }}</a>
+            <a href="{{ route('admins.reviews.index') }}">{{ $label('Reviews', 'التقييمات') }}</a>
+            <a href="{{ route('admins.comments.index') }}">{{ $label('Comments', 'التعليقات') }}</a>
 
             @if (auth(\App\Enums\AuthGuard::Admins->value)->user()?->hasRole(\App\Enums\AdminRole::SuperAdmin->value))
                 <a class="button" href="{{ route('admins.admins.create') }}">{{ $label('Add Admin', 'إضافة مدير') }}</a>

@@ -67,5 +67,8 @@
                 </div>
             </div>
         </article>
+
+        @include('user.items.partials.reviews', ['item' => $item])
+        @include('user.items.partials.comments', ['item' => $item])
     </section>
 @endsection
