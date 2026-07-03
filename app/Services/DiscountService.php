@@ -165,7 +165,6 @@ class DiscountService
             );
         }
     }
-
     private function assertUserUsageLimit(
         Discount $discount,
         ?User $user
@@ -174,12 +173,7 @@ class DiscountService
             return;
         }
 
-        $userUsageCount = DiscountUsage::query()
-            ->whereBelongsTo($discount)
-            ->whereBelongsTo($user)
-            ->count();
-
-        if ($userUsageCount >= $discount->max_uses_per_user) {
+        if ($user->hasReachedDiscountLimit($discount)) {
             throw new DiscountException(
                 'You have reached the maximum number of uses for this discount.'
             );

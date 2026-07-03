@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\HasCartTrait;
-use App\Models\Traits\HasDiscounts;
+use App\Models\Traits\HasDiscountUsage;
 use App\Models\Relations\DiscountRelations;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,7 +18,7 @@ class User extends Authenticatable
         HasRoles,
         Notifiable,
         HasCartTrait,
-        HasDiscounts,
+        HasDiscountUsage,
         DiscountRelations;
 
     protected string $guard_name = 'web';

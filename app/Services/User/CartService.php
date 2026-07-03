@@ -133,18 +133,28 @@ class CartService
         return $this->getCart()->clearDiscount();
     }
 
-    public function mergeGuestCart(?string $sessionId = null): ?string{
+    public function mergeGuestCart(?string $sessionId = null): ?string
+    {
         if (! Auth::check()) {
             return null;
         }
+
         $guestCart = Cart::with('items')
             ->where('session_id', $sessionId ?? Session::getId())
             ->active()
             ->first();
+
         if (! $guestCart || $guestCart->isEmpty()) {
-            return null;}
+            return null;
+        }
+
         $userCart = $this->getCart()->loadMissing('items');
+
         return DB::transaction(function () use ($guestCart, $userCart) {
+            // سلوك مقصود: لو المستخدم المسجّل عنده كود مطبق بالفعل على كارته،
+            // بياخد الأولوية على كود الضيف. لو مفيش كود عند المستخدم، بنستخدم
+            // كود الضيف (لو موجود). الكود المختار بيتعاد التحقق من صلاحيته
+            // بعد الدمج جوه refreshMergedDiscount لأن الـ subtotal بيتغير.
             $discountCode = $userCart->discount_code ?: $guestCart->discount_code;
             $existingItems = $userCart->items->keyBy('item_id');
             $newItems = [];
@@ -157,6 +167,7 @@ class CartService
                     $item->increment('quantity', $guestItem->quantity);
                     continue;
                 }
+
                 $newItems[] = [
                     'cart_id' => $userCart->id,
                     'item_id' => $guestItem->item_id,
@@ -167,20 +178,24 @@ class CartService
                     'updated_at' => $now,
                 ];
             }
+
             if ($newItems) {
                 $userCart->items()->insert($newItems);
             }
+
             $userCart->load('items');
+
             $warning = $this->refreshMergedDiscount($userCart, $discountCode);
+
             $guestCart->items()->delete();
             $guestCart->markAsAbandoned();
+
             return $warning;
         });
     }
     private function refreshMergedDiscount(
         Cart $cart,
-        ?string $discountCode,
-        ?string $previousDiscountCode
+        ?string $discountCode
     ): ?string {
         if (! $discountCode) {
             $cart->clearDiscount();
