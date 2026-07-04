@@ -1,7 +1,6 @@
 @php
     $isArabic = app()->getLocale() === 'ar';
     $t = fn (string $en, string $ar) => $isArabic ? $ar : $en;
-    $myReview = auth()->check() ? $item->reviews->firstWhere('user_id', auth()->id()) : null;
     $avg = (int) round($item->averageRating());
 @endphp
 
@@ -48,7 +47,7 @@
     @endauth
 
     <div class="stack">
-        @forelse ($item->reviews as $review)
+        @forelse ($reviews as $review)
             <div class="review-item">
                 <strong>{{ $review->user->name }}</strong>
                 <span class="rating-stars">{{ str_repeat('*', $review->rating) }}{{ str_repeat('-', 5 - $review->rating) }}</span>
@@ -60,4 +59,6 @@
             <p class="muted">{{ $t('No reviews yet', 'لا توجد تقييمات حتى الآن') }}</p>
         @endforelse
     </div>
+
+    {{ $reviews->links() }}
 </section>

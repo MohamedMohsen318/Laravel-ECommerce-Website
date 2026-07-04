@@ -22,14 +22,25 @@ class ItemController extends Controller
     public function show(Item $item): View
     {
         abort_unless($item->is_active, 404);
+
         $item->load([
             'media',
             'categories.translations',
-            'reviews.user',
-            'comments.user',
-            'comments.replies',
         ]);
 
-        return view('user.items.show', compact('item'));
+        $reviews = $item->reviews()
+            ->with('user')
+            ->paginate(10, ['*'], 'reviews_page')
+            ->withQueryString();
+
+        $comments = $item->comments()
+            ->paginate(10, ['*'], 'comments_page')
+            ->withQueryString();
+
+        $myReview = auth()->check()
+            ? $item->reviews()->where('user_id', auth()->id())->first()
+            : null;
+
+        return view('user.items.show', compact('item', 'reviews', 'comments', 'myReview'));
     }
 }

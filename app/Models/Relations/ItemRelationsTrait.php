@@ -19,7 +19,7 @@ trait ItemRelationsTrait
 
     public function reviews(): HasMany
     {
-        return $this->hasMany(ProductReview::class);
+        return $this->hasMany(ProductReview::class)->latest();
     }
 
     public function comments(): HasMany

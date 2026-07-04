@@ -20,10 +20,12 @@
     @endauth
 
     <div class="stack">
-        @forelse ($item->comments as $comment)
+        @forelse ($comments as $comment)
             @include('user.items.partials.comment', ['comment' => $comment, 'item' => $item])
         @empty
             <p class="muted">{{ $t('No comments yet', 'لا يوجد تعليقات حتى الآن') }}</p>
         @endforelse
     </div>
+
+    {{ $comments->links() }}
 </section>
