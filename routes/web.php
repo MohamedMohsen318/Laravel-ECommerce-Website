@@ -241,7 +241,6 @@ Route::prefix('admin')
                     Route::delete('{review}', 'destroy')->name('destroy')
                         ->middleware('permission:delete-product-feedback');
                 });
-
             Route::prefix('comments')
                 ->name('comments.')
                 ->controller(AdminCommentController::class)

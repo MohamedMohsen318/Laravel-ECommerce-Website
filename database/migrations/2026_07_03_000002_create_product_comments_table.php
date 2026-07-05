@@ -15,10 +15,6 @@ return new class extends Migration
             $table->foreignId('parent_id')->nullable()->constrained('product_comments')->cascadeOnDelete();
             $table->text('body');
             $table->timestamps();
-
-            $table->index('item_id');
-            $table->index('user_id');
-            $table->index('parent_id');
         });
     }
 
