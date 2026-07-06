@@ -12,7 +12,7 @@ class ProductReviewService
         return ProductReview::query()
             ->with(['item', 'user'])
             ->latest()
-            ->paginate(20);
+            ->paginate(15);
     }
 
     public function destroy(ProductReview $review): void
