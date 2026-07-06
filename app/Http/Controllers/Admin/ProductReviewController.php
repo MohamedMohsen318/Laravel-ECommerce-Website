@@ -14,15 +14,12 @@ class ProductReviewController extends Controller
         private readonly ProductReviewService $reviewService
     ) {}
 
-    public function index(): View
-    {
+    public function index(): View{
         $reviews = $this->reviewService->getAllPaginated();
 
         return view('admin.reviews.index', compact('reviews'));
     }
-
-    public function destroy(ProductReview $review): RedirectResponse
-    {
+    public function destroy(ProductReview $review): RedirectResponse{
         $this->reviewService->destroy($review);
 
         return back()->with('success', __('messages.review_deleted'));
