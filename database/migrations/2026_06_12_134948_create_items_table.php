@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('items', function (Blueprint $table) {
@@ -20,6 +17,7 @@ return new class extends Migration
             $table->string('status')->default('available');
             $table->unsignedInteger('stock')->default(0);
             $table->string('sku')->unique()->nullable();
+            $table->boolean('has_variants')->default(false)->after('sku');
             $table->timestamps();
         });
 
@@ -31,9 +29,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('category_item');

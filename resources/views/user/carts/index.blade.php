@@ -60,7 +60,12 @@
                                             </div>
                                         @endif
 
-                                        <span style="font-weight:700">{{ $item->name }}</span>
+                                        <span style="font-weight:700">
+                                            {{ $item->name }}
+                                            @if ($cartItem->itemVariant)
+                                                <small class="muted" style="display:block">{{ $cartItem->itemVariant->options_label }}</small>
+                                            @endif
+                                        </span>
                                     </div>
                                 </td>
 
@@ -179,6 +184,7 @@
                             <input type="hidden" name="checkout_from_cart" value="1">
                             @foreach($cart->items as $cartItem)
                                 <input type="hidden" name="items[{{ $loop->index }}][item_id]" value="{{ $cartItem->item_id }}">
+                                <input type="hidden" name="items[{{ $loop->index }}][item_variant_id]" value="{{ $cartItem->item_variant_id }}">
                                 <input type="hidden" name="items[{{ $loop->index }}][quantity]" value="{{ $cartItem->quantity }}">
                             @endforeach
                             <button class="button" type="submit" style="width:100%">

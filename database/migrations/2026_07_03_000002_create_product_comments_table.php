@@ -6,8 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
-    {
+    public function up(): void{
         Schema::create('product_comments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('item_id')->constrained('items')->cascadeOnDelete();
@@ -17,9 +16,7 @@ return new class extends Migration
             $table->timestamps();
         });
     }
-
-    public function down(): void
-    {
+    public function down(): void{
         Schema::dropIfExists('product_comments');
     }
 };

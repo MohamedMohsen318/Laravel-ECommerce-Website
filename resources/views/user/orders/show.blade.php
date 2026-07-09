@@ -27,7 +27,12 @@
                 <tbody>
                 @foreach ($order->items as $orderItem)
                     <tr>
-                        <td>{{ $orderItem->item->name ?? 'N/A' }}</td>
+                        <td>
+                            {{ $orderItem->item->name ?? 'N/A' }}
+                            @if ($orderItem->itemVariant)
+                                <small class="muted" style="display:block">{{ $orderItem->itemVariant->options_label }}</small>
+                            @endif
+                        </td>
                         <td>{{ $orderItem->quantity }}</td>
                         <td>{{ $orderItem->price }}</td>
                     </tr>

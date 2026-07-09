@@ -11,6 +11,7 @@ class CartItem extends Model
     protected $fillable = [
         'cart_id',
         'item_id',
+        'item_variant_id',
         'quantity',
         'price',
         'options',

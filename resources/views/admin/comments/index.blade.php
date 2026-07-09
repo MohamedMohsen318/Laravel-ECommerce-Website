@@ -5,7 +5,6 @@
 @section('content')
     <section class="stack">
         <h1>Comments</h1>
-
         <table class="table">
             <thead>
                 <tr>

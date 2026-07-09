@@ -3,6 +3,7 @@
 namespace App\Models\Relations;
 
 use App\Models\Category;
+use App\Models\ItemVariant;
 use App\Models\ProductComment;
 use App\Models\ProductReview;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -28,5 +29,10 @@ trait ItemRelationsTrait
             ->whereNull('parent_id')
             ->with('replies', 'user')
             ->latest();
+    }
+
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ItemVariant::class);
     }
 }

@@ -28,7 +28,7 @@ class CartController extends Controller
 
     public function show(Cart $cart): View
     {
-        $cart->load(['user', 'items.item']);
+        $cart->load(['user', 'items.item', 'items.itemVariant.optionValues.option']);
 
         return view('admin.cart.show', compact('cart'));
     }

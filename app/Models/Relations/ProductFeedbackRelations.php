@@ -18,3 +18,4 @@ trait ProductFeedbackRelations
         return $this->hasMany(ProductComment::class);
     }
 }
+

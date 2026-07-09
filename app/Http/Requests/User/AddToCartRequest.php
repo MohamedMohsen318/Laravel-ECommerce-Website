@@ -15,22 +15,10 @@ class AddToCartRequest extends FormRequest
     {
         return [
             'item_id'  => ['required', 'integer', 'exists:items,id'],
+            'item_variant_id' => ['nullable', 'integer', 'exists:item_variants,id'],
             'quantity' => ['required', 'integer', 'min:1', 'max:100'],
             'options'  => ['nullable', 'array'],
         ];
     }
 
-    public function messages(): array
-    {
-        return [
-            'item_id.required'  => 'The product is required.',
-            'item_id.integer'   => 'Invalid product id.',
-            'item_id.exists'    => 'The selected product does not exist.',
-            'quantity.required' => 'Quantity is required.',
-            'quantity.integer'  => 'Quantity must be a valid number.',
-            'quantity.min'      => 'Minimum quantity is 1.',
-            'quantity.max'      => 'Maximum quantity is 100.',
-            'options.array'     => 'Options must be an array.',
-        ];
-    }
 }

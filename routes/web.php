@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\{
     DiscountController as AdminDiscountController,
     DashboardController as AdminDashboardController,
     ItemController as AdminItemController,
+    ItemOptionController as AdminItemOptionController,
     OrderController as AdminOrderController,
     PermissionController as AdminPermissionController,
     ProductCommentController as AdminCommentController,
@@ -115,6 +116,9 @@ Route::resource('products', UserItemController::class)
     ->only(['index', 'show'])
     ->parameters(['products' => 'item']);
 
+Route::get('products/{item}/variants', [UserItemController::class, 'variants'])
+    ->name('products.variants');
+
 
 // Cart
 
@@ -182,6 +186,8 @@ Route::prefix('admin')
                 ->names('items')
                 ->parameters(['products' => 'item']);
 
+            Route::resource('item-options', AdminItemOptionController::class)
+                ->except(['show']);
 
             Route::resource('admins', AdminController::class)
                 ->only(['index', 'create', 'store', 'destroy'])

@@ -6,8 +6,10 @@ use App\Enums\CartStatus;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Item;
+use App\Models\ItemVariant;
 use App\Services\DiscountException;
 use App\Services\DiscountService;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -39,17 +41,56 @@ class CartService
         )->loadMissing('items');
     }
 
-    public function addItem(int $itemId, int $quantity = 1, array $options = []): CartItem
+    public function addItem(
+        int $itemId,
+        int $quantity = 1,
+        ?int $itemVariantId = null,
+        array $options = []
+    ): CartItem
     {
         $cart = $this->getCart();
 
         $item = Item::findOrFail($itemId);
+        $price = $item->discount_price ?? $item->price;
+        $availableStock = $item->stock;
+
+        if ($item->has_variants) {
+            if (! $itemVariantId) {
+                throw ValidationException::withMessages([
+                    'item_variant_id' => 'Please select a product variant.',
+                ]);
+            }
+
+            $variant = ItemVariant::where('item_id', $item->id)
+                ->where('is_active', true)
+                ->findOrFail($itemVariantId);
+
+            $price = $variant->effective_price;
+            $availableStock = $variant->stock;
+        } elseif ($itemVariantId) {
+            throw ValidationException::withMessages([
+                'item_variant_id' => 'This product does not use variants.',
+            ]);
+        }
+
+        if ($availableStock < $quantity) {
+            throw ValidationException::withMessages([
+                'quantity' => 'The requested quantity is not available in stock.',
+            ]);
+        }
 
         $existingItem = $cart->items()
             ->where('item_id', $itemId)
+            ->where('item_variant_id', $itemVariantId)
             ->first();
 
         if ($existingItem) {
+            if (($existingItem->quantity + $quantity) > $availableStock) {
+                throw ValidationException::withMessages([
+                    'quantity' => 'The requested quantity is not available in stock.',
+                ]);
+            }
+
             $existingItem->increment('quantity', $quantity);
 
             return $existingItem->fresh();
@@ -57,8 +98,9 @@ class CartService
 
         return $cart->items()->create([
             'item_id' => $item->id,
+            'item_variant_id' => $itemVariantId,
             'quantity' => $quantity,
-            'price' => $item->price,
+            'price' => $price,
             'options' => $options,
         ]);
     }
@@ -152,12 +194,15 @@ class CartService
             // كود الضيف (لو موجود). الكود المختار بيتعاد التحقق من صلاحيته
             // بعد الدمج جوه refreshMergedDiscount لأن الـ subtotal بيتغير.
             $discountCode = $userCart->discount_code ?: $guestCart->discount_code;
-            $existingItems = $userCart->items->keyBy('item_id');
+            $existingItems = $userCart->items->keyBy(
+                fn ($item) => $item->item_id . '-' . ($item->item_variant_id ?? 'base')
+            );
             $newItems = [];
             $now = now();
 
             foreach ($guestCart->items as $guestItem) {
-                $item = $existingItems->get($guestItem->item_id);
+                $key = $guestItem->item_id . '-' . ($guestItem->item_variant_id ?? 'base');
+                $item = $existingItems->get($key);
 
                 if ($item) {
                     $item->increment('quantity', $guestItem->quantity);
@@ -167,6 +212,7 @@ class CartService
                 $newItems[] = [
                     'cart_id' => $userCart->id,
                     'item_id' => $guestItem->item_id,
+                    'item_variant_id' => $guestItem->item_variant_id,
                     'quantity' => $guestItem->quantity,
                     'price' => $guestItem->price,
                     'options' => $guestItem->options,

@@ -24,11 +24,13 @@ class Item extends Model
         'status',
         'stock',
         'sku',
+        'has_variants',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_discount' => 'boolean',
+        'has_variants' => 'boolean',
         'price' => 'decimal:2',
         'discount_price' => 'decimal:2',
         'status' => ItemStatus::class,
@@ -52,5 +54,33 @@ class Item extends Model
     public function reviewsCount(): int
     {
         return $this->reviews()->count();
+    }
+
+    public function getEffectivePriceAttribute(): float
+    {
+        if ($this->has_variants) {
+            return (float) ($this->variants()
+                ->where('is_active', true)
+                ->get()
+                ->min('effective_price') ?? 0);
+        }
+
+        return (float) ($this->discount_price ?? $this->price);
+    }
+
+    public function getEffectiveStockAttribute(): int
+    {
+        if ($this->has_variants) {
+            return (int) $this->variants()
+                ->where('is_active', true)
+                ->sum('stock');
+        }
+
+        return (int) $this->stock;
+    }
+
+    public function isInStock(): bool
+    {
+        return $this->effective_stock > 0;
     }
 }

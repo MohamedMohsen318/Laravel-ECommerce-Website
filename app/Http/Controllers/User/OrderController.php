@@ -20,7 +20,7 @@ class OrderController extends Controller
         $orders = auth()
             ->user()
             ->orders()
-            ->with('items.item.media')
+            ->with('items.item.media', 'items.itemVariant.optionValues.option')
             ->latest()
             ->paginate(10);
 
@@ -31,7 +31,7 @@ class OrderController extends Controller
     {
         abort_if($order->user_id !== auth()->id(), 403);
 
-        $order->load('items.item.media');
+        $order->load('items.item.media', 'items.itemVariant.optionValues.option');
 
         return view('user.orders.show', compact('order'));
     }
@@ -41,6 +41,7 @@ class OrderController extends Controller
         $data = $request->validate([
             'items' => ['required', 'array'],
             'items.*.item_id' => ['required', 'exists:items,id'],
+            'items.*.item_variant_id' => ['nullable', 'exists:item_variants,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
         ]);
 

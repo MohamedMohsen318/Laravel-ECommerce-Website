@@ -18,7 +18,7 @@ class CartController extends Controller
     public function index(): View
     {
         $cart = $this->cartService->getCart()
-            ->load('items.item');
+            ->load('items.item.media', 'items.itemVariant.optionValues.option');
 
         return view('user.carts.index', compact('cart'));
     }
@@ -28,6 +28,7 @@ class CartController extends Controller
         $this->cartService->addItem(
             $request->item_id,
             $request->quantity,
+            $request->item_variant_id,
             $request->options ?? []
         );
 

@@ -43,6 +43,9 @@
 
                 <td>
                     {{ $orderItem->item?->name ?? 'Deleted Product' }}
+                    @if ($orderItem->itemVariant)
+                        <small class="muted" style="display:block">{{ $orderItem->itemVariant->options_label }}</small>
+                    @endif
                 </td>
 
                 <td>

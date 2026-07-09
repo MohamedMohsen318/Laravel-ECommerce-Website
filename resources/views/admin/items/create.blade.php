@@ -52,6 +52,49 @@
                     <span>Image</span>
                     <input class="input" type="file" name="image" accept="image/*">
                 </label>
+                <div class="stack">
+                    <h2 style="margin:0; font-size:20px">Variants</h2>
+                    @for ($i = 0; $i < 3; $i++)
+                        <div class="card">
+                            <div class="form">
+                                <label class="field">
+                                    <span>Variant SKU</span>
+                                    <input type="text" name="variants[{{ $i }}][sku]" value="{{ old("variants.$i.sku") }}">
+                                </label>
+                                <label class="field">
+                                    <span>Variant price</span>
+                                    <input type="number" name="variants[{{ $i }}][price]" value="{{ old("variants.$i.price") }}" step="0.01">
+                                </label>
+                                <label class="field">
+                                    <span>Discount price</span>
+                                    <input type="number" name="variants[{{ $i }}][discount_price]" value="{{ old("variants.$i.discount_price") }}" step="0.01">
+                                </label>
+                                <label class="field">
+                                    <span>Variant stock</span>
+                                    <input type="number" name="variants[{{ $i }}][stock]" value="{{ old("variants.$i.stock") }}">
+                                </label>
+                                <label class="field">
+                                    <span>Option values</span>
+                                    <select name="variants[{{ $i }}][option_value_ids][]" multiple>
+                                        @foreach ($itemOptions as $option)
+                                            <optgroup label="{{ $option->name }}">
+                                                @foreach ($option->values as $value)
+                                                    <option value="{{ $value->id }}" @selected(in_array($value->id, old("variants.$i.option_value_ids", [])))>
+                                                        {{ $value->value }}
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
+                                    </select>
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="variants[{{ $i }}][is_active]" value="1" @checked(old("variants.$i.is_active", true))>
+                                    <span>Active variant</span>
+                                </label>
+                            </div>
+                        </div>
+                    @endfor
+                </div>
                 <button class="button" type="submit">Save Product</button>
             </form>
         </div>

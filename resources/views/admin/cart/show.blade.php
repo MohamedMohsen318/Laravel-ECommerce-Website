@@ -51,6 +51,9 @@
 
                                     <span style="font-weight:700">
                                         {{ $item->name }}
+                                        @if ($cartItem->itemVariant)
+                                            <small class="muted" style="display:block">{{ $cartItem->itemVariant->options_label }}</small>
+                                        @endif
                                     </span>
                                 </div>
                             </td>

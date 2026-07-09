@@ -12,30 +12,17 @@ use Illuminate\Http\RedirectResponse;
 
 class ProductCommentController extends Controller
 {
-    public function __construct(
-        private readonly ProductCommentService $commentService
-    ) {}
-
-    public function store(StoreProductCommentRequest $request, Item $item): RedirectResponse
-    {
-        $this->commentService->store($item, auth()->id(), $request->validated());
-
+    public function store(StoreProductCommentRequest $request, Item $item): RedirectResponse{
+        app(ProductCommentService::class)->store($item, auth()->id(), $request->validated());
         return back()->with('success', __('messages.comment_added'));
     }
-
-    public function update(UpdateProductCommentRequest $request, ProductComment $comment): RedirectResponse
-    {
-        $this->commentService->update($comment, $request->validated());
-
+    public function update(UpdateProductCommentRequest $request, ProductComment $comment): RedirectResponse{
+        app(ProductCommentService::class)->update($comment, $request->validated());
         return back()->with('success', __('messages.comment_updated'));
     }
-
-    public function destroy(ProductComment $comment): RedirectResponse
-    {
+    public function destroy(ProductComment $comment): RedirectResponse{
         abort_unless($comment->user_id === auth()->id(), 403);
-
-        $this->commentService->destroy($comment);
-
+        app(ProductCommentService::class)->destroy($comment);
         return back()->with('success', __('messages.comment_deleted'));
     }
 }

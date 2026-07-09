@@ -62,6 +62,63 @@
                     <input type="checkbox" name="is_active" {{ $item->is_active ? 'checked' : '' }}>
                     <span>Active</span>
                 </label>
+                <div class="stack">
+                    <h2 style="margin:0; font-size:20px">Variants</h2>
+                    @php
+                        $variantRows = old('variants', $item->variants->map(fn ($variant) => [
+                            'id' => $variant->id,
+                            'sku' => $variant->sku,
+                            'price' => $variant->price,
+                            'discount_price' => $variant->discount_price,
+                            'stock' => $variant->stock,
+                            'is_active' => $variant->is_active,
+                            'option_value_ids' => $variant->optionValues->pluck('id')->all(),
+                        ])->all());
+
+                        $variantRows = array_pad($variantRows, count($variantRows) + 2, []);
+                    @endphp
+                    @foreach ($variantRows as $i => $variant)
+                        <div class="card">
+                            <div class="form">
+                                <input type="hidden" name="variants[{{ $i }}][id]" value="{{ $variant['id'] ?? '' }}">
+                                <label class="field">
+                                    <span>Variant SKU</span>
+                                    <input type="text" name="variants[{{ $i }}][sku]" value="{{ $variant['sku'] ?? '' }}">
+                                </label>
+                                <label class="field">
+                                    <span>Variant price</span>
+                                    <input type="number" name="variants[{{ $i }}][price]" value="{{ $variant['price'] ?? '' }}" step="0.01">
+                                </label>
+                                <label class="field">
+                                    <span>Discount price</span>
+                                    <input type="number" name="variants[{{ $i }}][discount_price]" value="{{ $variant['discount_price'] ?? '' }}" step="0.01">
+                                </label>
+                                <label class="field">
+                                    <span>Variant stock</span>
+                                    <input type="number" name="variants[{{ $i }}][stock]" value="{{ $variant['stock'] ?? '' }}">
+                                </label>
+                                <label class="field">
+                                    <span>Option values</span>
+                                    <select name="variants[{{ $i }}][option_value_ids][]" multiple>
+                                        @foreach ($itemOptions as $option)
+                                            <optgroup label="{{ $option->name }}">
+                                                @foreach ($option->values as $value)
+                                                    <option value="{{ $value->id }}" @selected(in_array($value->id, $variant['option_value_ids'] ?? []))>
+                                                        {{ $value->value }}
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
+                                    </select>
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="variants[{{ $i }}][is_active]" value="1" @checked($variant['is_active'] ?? true)>
+                                    <span>Active variant</span>
+                                </label>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
                 <button class="button" type="submit">Update Product</button>
             </form>
         </div>
