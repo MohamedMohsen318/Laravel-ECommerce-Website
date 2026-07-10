@@ -9,13 +9,14 @@ use Illuminate\Http\Request;
 
 class ItemOptionController extends Controller
 {
-    public function __construct(
-        protected ItemOptionService $itemOptionService
-    ) {}
+    protected function service(): ItemOptionService
+    {
+        return app(ItemOptionService::class);
+    }
 
     public function index()
     {
-        $options = $this->itemOptionService->getAll();
+        $options = $this->service()->getAll();
 
         return view('admin.item-options.index', compact('options'));
     }
@@ -29,7 +30,7 @@ class ItemOptionController extends Controller
     {
         $data = $request->validate($this->rules());
 
-        $this->itemOptionService->create($data);
+        $this->service()->create($data);
 
         return redirect()
             ->route('admins.item-options.index')
@@ -47,7 +48,7 @@ class ItemOptionController extends Controller
     {
         $data = $request->validate($this->rules());
 
-        $this->itemOptionService->update($itemOption, $data);
+        $this->service()->update($itemOption, $data);
 
         return redirect()
             ->route('admins.item-options.index')
@@ -56,7 +57,7 @@ class ItemOptionController extends Controller
 
     public function destroy(ItemOption $itemOption)
     {
-        $this->itemOptionService->delete($itemOption);
+        $this->service()->delete($itemOption);
 
         return back()->with('success', 'Option deleted successfully.');
     }
