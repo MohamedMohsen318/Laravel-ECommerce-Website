@@ -57,11 +57,8 @@
                                     </span>
                                 </div>
                             </td>
-
                             <td>{{ number_format($cartItem->price, 2) }} EGP</td>
-
                             <td>{{ $cartItem->quantity }}</td>
-
                             <td style="font-weight:900">
                                 {{ number_format($cartItem->total, 2) }} EGP
                             </td>

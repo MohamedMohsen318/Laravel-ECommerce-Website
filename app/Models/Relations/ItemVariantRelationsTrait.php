@@ -12,26 +12,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait ItemVariantRelationsTrait
 {
-    public function item(): BelongsTo
-    {
+    public function item(): BelongsTo{
         return $this->belongsTo(Item::class);
     }
-
-    public function optionValues(): BelongsToMany
-    {
+    public function optionValues(): BelongsToMany{
         return $this->belongsToMany(
             related: ItemOptionValue::class,
             table: 'item_variant_option_value'
         );
     }
-
-    public function cartItems(): HasMany
-    {
+    public function cartItems(): HasMany{
         return $this->hasMany(CartItem::class);
     }
-
-    public function orderItems(): HasMany
-    {
+    public function orderItems(): HasMany{
         return $this->hasMany(OrderItem::class);
     }
 }

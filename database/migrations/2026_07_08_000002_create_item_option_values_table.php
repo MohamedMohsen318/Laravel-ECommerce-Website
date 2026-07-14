@@ -13,11 +13,9 @@ return new class extends Migration
             $table->foreignId('item_option_id')->constrained()->cascadeOnDelete();
             $table->string('value');
             $table->timestamps();
-
             $table->unique(['item_option_id', 'value']);
         });
     }
-
     public function down(): void
     {
         Schema::dropIfExists('item_option_values');

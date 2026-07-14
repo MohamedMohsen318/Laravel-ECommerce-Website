@@ -58,23 +58,18 @@ Route::prefix('admin')->group(function () {
         Route::delete('categories/{category}', [CategoryController::class, 'destroy'])
             ->name('admins.categories.destroy');
 
-        // Products (Items)
+        // Items
 
         Route::get('products', [ItemController::class, 'index'])
             ->name('admins.items.index');
-
         Route::get('products/create', [ItemController::class, 'create'])
             ->name('admins.items.create');
-
         Route::post('products', [ItemController::class, 'store'])
             ->name('admins.items.store');
-
         Route::get('products/{item}/edit', [ItemController::class, 'edit'])
             ->name('admins.items.edit');
-
         Route::put('products/{item}', [ItemController::class, 'update'])
             ->name('admins.items.update');
-
         Route::delete('products/{item}', [ItemController::class, 'destroy'])
             ->name('admins.items.destroy');
 
@@ -82,19 +77,14 @@ Route::prefix('admin')->group(function () {
 
         Route::get('item-options', [ItemOptionController::class, 'index'])
             ->name('admins.item-options.index');
-
         Route::get('item-options/create', [ItemOptionController::class, 'create'])
             ->name('admins.item-options.create');
-
         Route::post('item-options', [ItemOptionController::class, 'store'])
             ->name('admins.item-options.store');
-
         Route::get('item-options/{item_option}/edit', [ItemOptionController::class, 'edit'])
             ->name('admins.item-options.edit');
-
         Route::put('item-options/{item_option}', [ItemOptionController::class, 'update'])
             ->name('admins.item-options.update');
-
         Route::delete('item-options/{item_option}', [ItemOptionController::class, 'destroy'])
             ->name('admins.item-options.destroy');
 

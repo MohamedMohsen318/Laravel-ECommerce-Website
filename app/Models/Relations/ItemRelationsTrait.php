@@ -30,7 +30,6 @@ trait ItemRelationsTrait
             ->with('replies', 'user')
             ->latest();
     }
-
     public function variants(): HasMany
     {
         return $this->hasMany(ItemVariant::class);

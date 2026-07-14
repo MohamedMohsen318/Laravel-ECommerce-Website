@@ -14,56 +14,37 @@ class ItemOptionController extends Controller
         return app(ItemOptionService::class);
     }
 
-    public function index()
-    {
+    public function index(){
         $options = $this->service()->getAll();
 
         return view('admin.item-options.index', compact('options'));
     }
-
-    public function create()
-    {
+    public function create(){
         return view('admin.item-options.create');
     }
-
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $data = $request->validate($this->rules());
-
         $this->service()->create($data);
-
         return redirect()
             ->route('admins.item-options.index')
             ->with('success', 'Option created successfully.');
     }
-
-    public function edit(ItemOption $itemOption)
-    {
+    public function edit(ItemOption $itemOption){
         $itemOption->load('values');
-
         return view('admin.item-options.edit', compact('itemOption'));
     }
-
-    public function update(Request $request, ItemOption $itemOption)
-    {
+    public function update(Request $request, ItemOption $itemOption){
         $data = $request->validate($this->rules());
-
         $this->service()->update($itemOption, $data);
-
         return redirect()
             ->route('admins.item-options.index')
             ->with('success', 'Option updated successfully.');
     }
-
-    public function destroy(ItemOption $itemOption)
-    {
+    public function destroy(ItemOption $itemOption){
         $this->service()->delete($itemOption);
-
         return back()->with('success', 'Option deleted successfully.');
     }
-
-    private function rules(): array
-    {
+    private function rules(): array{
         return [
             'name' => ['required', 'string', 'max:255'],
             'values' => ['required', 'array', 'min:1'],
