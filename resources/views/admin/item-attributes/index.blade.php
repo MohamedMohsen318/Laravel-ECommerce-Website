@@ -15,7 +15,6 @@
                     <tr>
                         <th>Name</th>
                         <th>Values</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
