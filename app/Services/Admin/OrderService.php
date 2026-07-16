@@ -11,7 +11,7 @@ class OrderService
         return Order::with([
             'user',
             'items.item.media',
-            'items.itemVariant.optionValues.option',
+            'items.item.attributeValues.attribute',
         ])
             ->latest()
             ->paginate(15);
@@ -20,7 +20,7 @@ class OrderService
         return $order->load([
             'user',
             'items.item.media',
-            'items.itemVariant.optionValues.option',
+            'items.item.attributeValues.attribute',
         ]);
     }
 }

@@ -10,14 +10,16 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->decimal('price', 10, 2)->default(0);
+            $table->enum('type', ['simple', 'variant'])->default('simple')->after('id');
+            $table->foreignId('parent_id')->nullable()->after('type')
+                ->constrained('items')->cascadeOnDelete();
+            $table->decimal('price', 10, 2)->nullable();
             $table->decimal('discount_price', 10, 2)->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_discount')->default(false);
             $table->string('status')->default('available');
-            $table->unsignedInteger('stock')->default(0);
+            $table->unsignedInteger('stock')->nullable();
             $table->string('sku')->unique()->nullable();
-            $table->boolean('has_variants')->default(false)->after('sku');
             $table->timestamps();
         });
 

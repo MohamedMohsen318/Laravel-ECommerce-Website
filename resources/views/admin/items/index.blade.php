@@ -20,16 +20,16 @@
                             <td>
                                 {{ $item->name }}
                                 @if ($item->has_variants)
-                                    <small class="muted" style="display:block">{{ $item->variants->count() }} variants</small>
+                                    <small class="muted" style="display:block">{{ $item->children->count() }} variants</small>
                                 @endif
                             </td>
                             <td>
                                 {{ $item->categories->map(fn ($category) => $category->translate('en')?->name ?? $category->slug)->join(', ') ?: 'No category' }}
                             </td>
                             <td>
-                                @if ($item->has_variants && $item->variants->isNotEmpty())
+                                @if ($item->has_variants && $item->children->isNotEmpty())
                                     @php
-                                        $activeVariantPrices = $item->variants->where('is_active', true)->map->effective_price;
+                                        $activeVariantPrices = $item->children->where('is_active', true)->map->effective_price;
                                     @endphp
                                     {{ number_format($activeVariantPrices->min() ?? 0, 2) }} - {{ number_format($activeVariantPrices->max() ?? 0, 2) }} EGP
                                 @else

@@ -10,7 +10,7 @@ class CartService
 {
     public function getAllCarts(array $filters = []): LengthAwarePaginator
     {
-        return Cart::with(['user', 'items.item'])
+        return Cart::with(['user', 'items.item.attributeValues.attribute'])
             ->withSum('items as items_count', 'quantity')
             ->when(!empty($filters['status']), function ($query) use ($filters) {
                 $query->where('status', $filters['status']);
@@ -26,7 +26,7 @@ class CartService
                 });
             })
             ->latest()
-            ->paginate(20);
+            ->paginate(15);
     }
 
     public function getStats(): array

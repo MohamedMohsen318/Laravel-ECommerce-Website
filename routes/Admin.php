@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\ItemController;
-use App\Http\Controllers\Admin\ItemOptionController;
+use App\Http\Controllers\Admin\ItemAttributeController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductCommentController;
@@ -73,20 +73,20 @@ Route::prefix('admin')->group(function () {
         Route::delete('products/{item}', [ItemController::class, 'destroy'])
             ->name('admins.items.destroy');
 
-        // Item Options
+        // Item Attributes
 
-        Route::get('item-options', [ItemOptionController::class, 'index'])
-            ->name('admins.item-options.index');
-        Route::get('item-options/create', [ItemOptionController::class, 'create'])
-            ->name('admins.item-options.create');
-        Route::post('item-options', [ItemOptionController::class, 'store'])
-            ->name('admins.item-options.store');
-        Route::get('item-options/{item_option}/edit', [ItemOptionController::class, 'edit'])
-            ->name('admins.item-options.edit');
-        Route::put('item-options/{item_option}', [ItemOptionController::class, 'update'])
-            ->name('admins.item-options.update');
-        Route::delete('item-options/{item_option}', [ItemOptionController::class, 'destroy'])
-            ->name('admins.item-options.destroy');
+        Route::get('item-attributes', [ItemAttributeController::class, 'index'])
+            ->name('admins.item-attributes.index');
+        Route::get('item-attributes/create', [ItemAttributeController::class, 'create'])
+            ->name('admins.item-attributes.create');
+        Route::post('item-attributes', [ItemAttributeController::class, 'store'])
+            ->name('admins.item-attributes.store');
+        Route::get('item-attributes/{item_attribute}/edit', [ItemAttributeController::class, 'edit'])
+            ->name('admins.item-attributes.edit');
+        Route::put('item-attributes/{item_attribute}', [ItemAttributeController::class, 'update'])
+            ->name('admins.item-attributes.update');
+        Route::delete('item-attributes/{item_attribute}', [ItemAttributeController::class, 'destroy'])
+            ->name('admins.item-attributes.destroy');
 
         // Admins
 

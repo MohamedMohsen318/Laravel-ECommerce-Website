@@ -38,30 +38,21 @@
         <tbody>
 
         @foreach ($order->items as $orderItem)
-
             <tr>
-
                 <td>
                     {{ $orderItem->item?->name ?? 'Deleted Product' }}
-                    @if ($orderItem->itemVariant)
-                        <small class="muted" style="display:block">{{ $orderItem->itemVariant->options_label }}</small>
-                    @endif
+                    <small class="muted" style="display:block">{{ $orderItem->item?->options_label }}</small>
                 </td>
-
                 <td>
                     {{ number_format($orderItem->price, 2) }}
                 </td>
-
                 <td>
                     {{ $orderItem->quantity }}
                 </td>
-
                 <td>
                     {{ number_format($orderItem->price * $orderItem->quantity, 2) }}
                 </td>
-
             </tr>
-
         @endforeach
 
         </tbody>

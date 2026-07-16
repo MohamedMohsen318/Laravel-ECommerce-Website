@@ -29,9 +29,7 @@
                     <tr>
                         <td>
                             {{ $orderItem->item->name ?? 'N/A' }}
-                            @if ($orderItem->itemVariant)
-                                <small class="muted" style="display:block">{{ $orderItem->itemVariant->options_label }}</small>
-                            @endif
+                            <small class="muted" style="display:block">{{ $orderItem->item->options_label }}</small>
                         </td>
                         <td>{{ $orderItem->quantity }}</td>
                         <td>{{ $orderItem->price }}</td>

@@ -65,14 +65,14 @@
                 <div class="stack">
                     <h2 style="margin:0; font-size:20px">Variants</h2>
                     @php
-                        $variantRows = old('variants', $item->variants->map(fn ($variant) => [
+                        $variantRows = old('variants', $item->children->map(fn ($variant) => [
                             'id' => $variant->id,
                             'sku' => $variant->sku,
                             'price' => $variant->price,
                             'discount_price' => $variant->discount_price,
                             'stock' => $variant->stock,
                             'is_active' => $variant->is_active,
-                            'option_value_ids' => $variant->optionValues->pluck('id')->all(),
+                            'attribute_value_ids' => $variant->attributeValues->pluck('id')->all(),
                         ])->all());
 
                         $variantRows = array_pad($variantRows, count($variantRows) + 2, []);
@@ -98,12 +98,12 @@
                                     <input type="number" name="variants[{{ $i }}][stock]" value="{{ $variant['stock'] ?? '' }}">
                                 </label>
                                 <label class="field">
-                                    <span>Option values</span>
-                                    <select name="variants[{{ $i }}][option_value_ids][]" multiple>
-                                        @foreach ($itemOptions as $option)
-                                            <optgroup label="{{ $option->name }}">
-                                                @foreach ($option->values as $value)
-                                                    <option value="{{ $value->id }}" @selected(in_array($value->id, $variant['option_value_ids'] ?? []))>
+                                    <span>Attribute values</span>
+                                    <select name="variants[{{ $i }}][attribute_value_ids][]" multiple>
+                                        @foreach ($itemAttributes as $attribute)
+                                            <optgroup label="{{ $attribute->name }}">
+                                                @foreach ($attribute->values as $value)
+                                                    <option value="{{ $value->id }}" @selected(in_array($value->id, $variant['attribute_value_ids'] ?? []))>
                                                         {{ $value->value }}
                                                     </option>
                                                 @endforeach

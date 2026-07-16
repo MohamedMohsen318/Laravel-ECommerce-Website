@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ItemRequest;
 use App\Models\Item;
 use App\Services\Admin\CategoryService;
-use App\Services\Admin\ItemOptionService;
+use App\Services\Admin\ItemAttributeService;
 use App\Services\Admin\ItemService;
 
 class ItemController extends Controller
@@ -18,8 +18,8 @@ class ItemController extends Controller
     protected function categoryService(): CategoryService{
         return app(CategoryService::class);
     }
-    protected function itemOptionService(): ItemOptionService{
-        return app(ItemOptionService::class);
+    protected function itemAttributeService(): ItemAttributeService{
+        return app(ItemAttributeService::class);
     }
     public function index(){
         $items = $this->itemService()->getAll();
@@ -28,9 +28,9 @@ class ItemController extends Controller
     public function create(){
         $statuses = ItemStatus::cases();
         $selectCategories = $this->categoryService()->getCategoriesForSelect();
-        $itemOptions = $this->itemOptionService()->getAll();
+        $itemAttributes = $this->itemAttributeService()->getAll();
         return view('admin.items.create',
-            compact('statuses', 'selectCategories', 'itemOptions'));
+            compact('statuses', 'selectCategories', 'itemAttributes'));
     }
     public function store(ItemRequest $request){
         $data = $request->validated();
@@ -42,10 +42,10 @@ class ItemController extends Controller
     public function edit(Item $item){
         $statuses = ItemStatus::cases();
         $selectCategories = $this->categoryService()->getCategoriesForSelect();
-        $itemOptions = $this->itemOptionService()->getAll();
-        $item->load(['categories', 'media', 'variants.optionValues']);
+        $itemAttributes = $this->itemAttributeService()->getAll();
+        $item->load(['categories', 'media', 'children.attributeValues']);
         return view('admin.items.edit',
-            compact('item', 'statuses', 'selectCategories', 'itemOptions'));
+            compact('item', 'statuses', 'selectCategories', 'itemAttributes'));
     }
     public function update(ItemRequest $request, Item $item){
         $data = $request->validated();

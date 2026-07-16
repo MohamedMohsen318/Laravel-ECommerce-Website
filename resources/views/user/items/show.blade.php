@@ -6,10 +6,10 @@
     @php
         $isArabic = app()->getLocale() === 'ar';
         $t = fn (string $en, string $ar) => $isArabic ? $ar : $en;
-        $variantOptionGroups = $item->variants
-            ->flatMap->optionValues
+        $variantOptionGroups = $item->children
+            ->flatMap->attributeValues
             ->unique('id')
-            ->groupBy('item_option_id');
+            ->groupBy('item_attribute_id');
     @endphp
 
     <section class="stack">
@@ -50,17 +50,16 @@
 
                     <form method="POST" action="{{ route('cart.add') }}" class="actions">
                         @csrf
-                        <input type="hidden" name="item_id" value="{{ $item->id }}">
-                        <input type="hidden" name="item_variant_id" id="cart-variant-id">
+                        <input type="hidden" name="item_id" id="cart-item-id" value="{{ $item->id }}">
 
                         @if ($item->has_variants)
                             <div class="stack" id="variant-options" data-url="{{ route('products.variants', $item) }}" style="min-width:240px">
                                 @foreach ($variantOptionGroups as $values)
-                                    @php $option = $values->first()->option; @endphp
+                                    @php $attribute = $values->first()->attribute; @endphp
                                     <label class="field">
-                                        <span>{{ $option?->name }}</span>
+                                        <span>{{ $attribute?->name }}</span>
                                         <select class="variant-option-value">
-                                            <option value="">Select {{ $option?->name }}</option>
+                                            <option value="">Select {{ $attribute?->name }}</option>
                                             @foreach ($values->sortBy('value') as $value)
                                                 <option value="{{ $value->id }}">{{ $value->value }}</option>
                                             @endforeach
@@ -88,8 +87,7 @@
                     @auth
                         <form method="POST" action="{{ route('orders.store') }}">
                             @csrf
-                            <input type="hidden" name="items[0][item_id]" value="{{ $item->id }}">
-                            <input type="hidden" name="items[0][item_variant_id]" id="order-variant-id">
+                            <input type="hidden" name="items[0][item_id]" id="order-item-id" value="{{ $item->id }}">
                             <input type="hidden" name="items[0][quantity]" id="order-quantity" value="1">
                             <button class="button" id="order-submit" type="submit" @disabled($item->has_variants)>
                                 {{ $t('Order Now', 'Order Now') }}
@@ -110,8 +108,8 @@
         <script>
             const variantOptions = document.getElementById('variant-options');
             const optionSelects = [...document.querySelectorAll('.variant-option-value')];
-            const cartVariantInput = document.getElementById('cart-variant-id');
-            const orderVariantInput = document.getElementById('order-variant-id');
+            const cartItemInput = document.getElementById('cart-item-id');
+            const orderItemInput = document.getElementById('order-item-id');
             const cartQuantityInput = document.getElementById('cart-quantity');
             const orderQuantityInput = document.getElementById('order-quantity');
             const cartSubmit = document.getElementById('cart-submit');
@@ -121,10 +119,10 @@
             const variantMessage = document.getElementById('variant-message');
 
             const resetVariant = (message) => {
-                cartVariantInput.value = '';
+                cartItemInput.value = '{{ $item->id }}';
 
-                if (orderVariantInput) {
-                    orderVariantInput.value = '';
+                if (orderItemInput) {
+                    orderItemInput.value = '{{ $item->id }}';
                 }
 
                 cartSubmit.disabled = true;
@@ -151,7 +149,7 @@
                 }
 
                 const url = new URL(variantOptions.dataset.url, window.location.origin);
-                selectedIds.forEach((id) => url.searchParams.append('option_value_ids[]', id));
+                selectedIds.forEach((id) => url.searchParams.append('attribute_value_ids[]', id));
 
                 const response = await fetch(url, { headers: { Accept: 'application/json' } });
                 const data = await response.json();
@@ -162,10 +160,10 @@
                     return;
                 }
 
-                cartVariantInput.value = variant.id;
+                cartItemInput.value = variant.id;
 
-                if (orderVariantInput) {
-                    orderVariantInput.value = variant.id;
+                if (orderItemInput) {
+                    orderItemInput.value = variant.id;
                 }
 
                 priceText.textContent = `${Number(variant.effective_price).toFixed(2)} EGP`;

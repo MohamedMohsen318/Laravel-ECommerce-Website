@@ -12,16 +12,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('cart_id')->constrained()->cascadeOnDelete();
             $table->foreignId('item_id')->constrained('items')->cascadeOnDelete();
-            $table->foreignId('item_variant_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
             $table->integer('quantity')->default(1);
             $table->decimal('price', 10, 2);
             $table->json('options')->nullable();
             $table->timestamps();
 
-            $table->unique(['cart_id', 'item_id', 'item_variant_id'], 'cart_item_variant_unique');
+            $table->unique(['cart_id', 'item_id']);
         });
     }
 

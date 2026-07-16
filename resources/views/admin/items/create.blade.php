@@ -74,12 +74,12 @@
                                     <input type="number" name="variants[{{ $i }}][stock]" value="{{ old("variants.$i.stock") }}">
                                 </label>
                                 <label class="field">
-                                    <span>Option values</span>
-                                    <select name="variants[{{ $i }}][option_value_ids][]" multiple>
-                                        @foreach ($itemOptions as $option)
-                                            <optgroup label="{{ $option->name }}">
-                                                @foreach ($option->values as $value)
-                                                    <option value="{{ $value->id }}" @selected(in_array($value->id, old("variants.$i.option_value_ids", [])))>
+                                    <span>Attribute values</span>
+                                    <select name="variants[{{ $i }}][attribute_value_ids][]" multiple>
+                                        @foreach ($itemAttributes as $attribute)
+                                            <optgroup label="{{ $attribute->name }}">
+                                                @foreach ($attribute->values as $value)
+                                                    <option value="{{ $value->id }}" @selected(in_array($value->id, old("variants.$i.attribute_value_ids", [])))>
                                                         {{ $value->value }}
                                                     </option>
                                                 @endforeach

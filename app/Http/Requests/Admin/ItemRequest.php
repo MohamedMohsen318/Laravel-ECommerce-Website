@@ -25,14 +25,14 @@ class ItemRequest extends FormRequest
             'category_ids.*' => ['exists:categories,id'],
             'image' => ['nullable', 'image', 'max:2048'],
             'variants' => ['nullable', 'array'],
-            'variants.*.id' => ['nullable', 'integer', 'exists:item_variants,id'],
+            'variants.*.id' => ['nullable', 'integer', 'exists:items,id'],
             'variants.*.sku' => ['nullable', 'string', 'max:255'],
             'variants.*.price' => ['nullable', 'numeric', 'min:0'],
             'variants.*.discount_price' => ['nullable', 'numeric', 'min:0'],
             'variants.*.stock' => ['nullable', 'integer', 'min:0'],
             'variants.*.is_active' => ['nullable'],
-            'variants.*.option_value_ids' => ['nullable', 'array'],
-            'variants.*.option_value_ids.*' => ['exists:item_option_values,id'],
+            'variants.*.attribute_value_ids' => ['nullable', 'array'],
+            'variants.*.attribute_value_ids.*' => ['exists:item_attribute_values,id'],
         ];
     }
 }
