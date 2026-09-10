@@ -2,11 +2,16 @@
 
 namespace App\Models\Traits;
 
-use App\Models\ItemAttributeValue;
+use App\Models\AttributeValue;
 
 trait ItemAttributesTrait
 {
-    protected $appends = ['effective_price', 'options_label'];
+    protected $appends = [
+        'effective_price',
+        'effective_stock',
+        'has_variants',
+        'options_label',
+    ];
 
     public function getEffectivePriceAttribute(): ?float
     {
@@ -19,15 +24,7 @@ trait ItemAttributesTrait
 
     public function inStock(): bool
     {
-        return $this->is_active && (int) $this->stock > 0;
-    }
-
-    public function getOptionsLabelAttribute(): string
-    {
-        return $this->attributeValues
-            ->map(fn (ItemAttributeValue $value) => $value->attribute?->name . ': ' . $value->value)
-            ->filter()
-            ->join(' / ');
+        return $this->is_active && $this->effective_stock > 0;
     }
 
     public function getHasVariantsAttribute(): bool
@@ -41,6 +38,20 @@ trait ItemAttributesTrait
             return (int) $this->stock;
         }
 
-        return (int) $this->children->where('is_active', true)->sum('stock');
+        return (int) $this->children()
+            ->where('is_active', true)
+            ->sum('stock');
+    }
+
+    public function getOptionsLabelAttribute(): string
+    {
+        return $this->attributeValues()
+            ->with('attribute')
+            ->get()
+            ->map(function (AttributeValue $value) {
+                return "{$value->attribute?->name}: {$value->value}";
+            })
+            ->filter()
+            ->join(' / ');
     }
 }

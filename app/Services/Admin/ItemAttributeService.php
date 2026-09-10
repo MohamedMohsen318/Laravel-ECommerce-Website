@@ -2,7 +2,7 @@
 
 namespace App\Services\Admin;
 
-use App\Models\ItemAttribute;
+use App\Models\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -10,15 +10,15 @@ use Illuminate\Validation\ValidationException;
 class ItemAttributeService
 {
     public function getAll(): Collection{
-        return ItemAttribute::with('values')
+        return Attribute::with('values')
             ->orderBy('name')
             ->get();
     }
-    public function create(array $data): ItemAttribute{
+    public function create(array $data): Attribute{
         $values = $this->cleanValues($data['values'] ?? []);
         unset($data['values']);
         return DB::transaction(function () use ($data, $values) {
-            $attribute = ItemAttribute::create($data);
+            $attribute = Attribute::create($data);
             foreach ($values as $value) {
                 $attribute->values()->create([
                     'value' => $value,
@@ -27,7 +27,7 @@ class ItemAttributeService
             return $attribute;
         });
     }
-    public function update(ItemAttribute $itemAttribute, array $data): ItemAttribute{
+    public function update(Attribute $itemAttribute, array $data): Attribute{
         $values = $this->cleanValues($data['values'] ?? []);
         unset($data['values']);
         return DB::transaction(function () use ($itemAttribute, $data, $values) {
@@ -53,7 +53,7 @@ class ItemAttributeService
             return $itemAttribute;
         });
     }
-    public function delete(ItemAttribute $itemAttribute): bool{
+    public function delete(Attribute $itemAttribute): bool{
         if ($itemAttribute->values()->whereHas('items')->exists()) {
             throw ValidationException::withMessages([
                 'name' => 'Cannot delete an attribute that has values used by existing items.',

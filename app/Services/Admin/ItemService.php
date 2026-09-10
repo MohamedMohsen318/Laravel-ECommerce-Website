@@ -4,7 +4,7 @@ namespace App\Services\Admin;
 
 use App\Enums\MediaType;
 use App\Models\Item;
-use App\Models\ItemAttributeValue;
+use App\Models\AttributeValue;
 use Illuminate\Validation\ValidationException;
 
 class ItemService
@@ -115,8 +115,8 @@ class ItemService
                 ->values();
 
             $groups = $ids->isNotEmpty()
-                ? ItemAttributeValue::whereIn('id', $ids)
-                    ->pluck('item_attribute_id')
+                ? AttributeValue::whereIn('id', $ids)
+                    ->pluck('attribute_id')
                 : collect();
 
             $key = $ids->sort()->implode('-');

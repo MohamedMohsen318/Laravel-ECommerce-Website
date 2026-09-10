@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['simple', 'variant'])->default('simple')->after('id');
+            $table->enum('type', ['simple', 'variant'])->default('simple');
             $table->foreignId('parent_id')->nullable()->after('type')
                 ->constrained('items')->cascadeOnDelete();
             $table->decimal('price', 10, 2)->nullable();

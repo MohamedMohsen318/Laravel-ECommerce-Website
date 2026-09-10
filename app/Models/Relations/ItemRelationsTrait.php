@@ -2,10 +2,11 @@
 
 namespace App\Models\Relations;
 
+use App\Models\Attribute;
+use App\Models\AttributeValue;
 use App\Models\Category;
 use App\Models\CartItem;
 use App\Models\Item;
-use App\Models\ItemAttributeValue;
 use App\Models\OrderItem;
 use App\Models\ProductComment;
 use App\Models\ProductReview;
@@ -25,14 +26,29 @@ trait ItemRelationsTrait
         return $this->hasMany(Item::class, 'parent_id');
     }
 
+    public function attributes(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Attribute::class,
+            'item_attribute_values',
+            'item_id',
+            'attribute_id'
+        )->distinct();
+    }
+
     public function attributeValues(): BelongsToMany
     {
-        return $this->belongsToMany(ItemAttributeValue::class, 'item_attribute_value_item');
+        return $this->belongsToMany(
+            AttributeValue::class,
+            'item_attribute_values',
+            'item_id',
+            'attribute_value_id'
+        )->withPivot('attribute_id');
     }
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, table: 'category_item');
+        return $this->belongsToMany(Category::class, 'category_item');
     }
 
     public function reviews(): HasMany
@@ -44,7 +60,7 @@ trait ItemRelationsTrait
     {
         return $this->hasMany(ProductComment::class)
             ->whereNull('parent_id')
-            ->with('replies', 'user')
+            ->with(['replies', 'user'])
             ->latest();
     }
 
