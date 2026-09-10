@@ -6,13 +6,6 @@ use App\Models\AttributeValue;
 
 trait ItemAttributesTrait
 {
-    protected $appends = [
-        'effective_price',
-        'effective_stock',
-        'has_variants',
-        'options_label',
-    ];
-
     public function getEffectivePriceAttribute(): ?float
     {
         if (is_null($this->price)) {
@@ -25,6 +18,16 @@ trait ItemAttributesTrait
     public function inStock(): bool
     {
         return $this->is_active && $this->effective_stock > 0;
+    }
+
+    public function averageRating(): float
+    {
+        return round((float) $this->reviews()->avg('rating'), 1);
+    }
+
+    public function reviewsCount(): int
+    {
+        return $this->reviews()->count();
     }
 
     public function getHasVariantsAttribute(): bool

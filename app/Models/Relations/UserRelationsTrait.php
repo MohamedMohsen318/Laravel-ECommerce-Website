@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\ProductComment;
 use App\Models\ProductReview;
+use App\Enums\CartStatus;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -39,7 +40,16 @@ trait UserRelationsTrait
     public function getOrCreateCart(): Cart
     {
         return $this->carts()->firstOrCreate([
-            'status' => \App\Enums\CartStatus::ACTIVE,
+            'status' => CartStatus::ACTIVE,
         ]);
+    }
+
+    public function getCartItemsCount(): int
+    {
+        $cart = $this->carts()
+            ->where('status', CartStatus::ACTIVE)
+            ->first();
+
+        return (int) ($cart?->items()->sum('quantity') ?? 0);
     }
 }

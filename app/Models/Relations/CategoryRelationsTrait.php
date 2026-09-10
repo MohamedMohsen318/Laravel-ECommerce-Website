@@ -20,6 +20,11 @@ trait CategoryRelationsTrait
         return $this->hasMany(Category::class, 'parent_id')->orderBy('sort_order');
     }
 
+    public function allChildren(): HasMany
+    {
+        return $this->children()->with('allChildren');
+    }
+
     public function items(): BelongsToMany
     {
         return $this->belongsToMany(Item::class, 'category_item');

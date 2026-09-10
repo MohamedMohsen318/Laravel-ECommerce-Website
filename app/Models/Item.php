@@ -28,6 +28,13 @@ class Item extends Model
         'is_discount',
     ];
 
+    protected $appends = [
+        'effective_price',
+        'effective_stock',
+        'has_variants',
+        'options_label',
+    ];
+
     protected $casts = [
         'price' => 'decimal:2',
         'discount_price' => 'decimal:2',

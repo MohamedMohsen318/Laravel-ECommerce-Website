@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('attribute_value_id')
                 ->constrained('attribute_values')
                 ->cascadeOnDelete();
-            $table->unique(['item_id', 'attribute_id', 'attribute_value_id']);
+            $table->unique(['item_id', 'attribute_id', 'attribute_value_id'], 'item_attr_values_unique');
         });
     }
 
